@@ -1,0 +1,38 @@
+{"level":"error","message":"POST /api/wallet/tx-history - Error: Error getting transactions: Cannot read properties of null (reading '_id')","timestamp":"2025-05-16T14:10:41.586Z"}
+{"level":"error","message":"POST /api/wallet/tx-history - Error: Error getting transactions: Cannot read properties of null (reading '_id')","timestamp":"2025-05-16T15:59:45.417Z"}
+{"level":"error","message":"POST /api/wallet/tx-history - Error: Error getting transactions: Cannot read properties of null (reading '_id')","timestamp":"2025-05-16T16:01:01.420Z"}
+{"level":"error","message":"POST /api/wallet/tx-history - Error: Error getting transactions: Cannot read properties of null (reading '_id')","timestamp":"2025-05-16T16:07:04.735Z"}
+{"level":"error","message":"POST /api/wallet/tx-history - Error: Error getting transactions: Cannot read properties of null (reading '_id')","timestamp":"2025-05-16T16:07:23.312Z"}
+{"level":"error","message":"POST /api/wallet/tx-history - Error: Error getting transactions: Cannot read properties of null (reading '_id')","timestamp":"2025-05-16T16:09:37.416Z"}
+{"level":"error","message":"POST /api/wallet/tx-history - Error: Error getting transactions: Cannot read properties of null (reading '_id')","timestamp":"2025-05-16T16:14:58.427Z"}
+{"level":"error","message":"POST /api/auth/login - Error: Invalid email or password.","timestamp":"2025-08-21T14:26:35.181Z"}
+{"level":"error","message":"POST /api/auth/login - Error: Invalid email or password.","timestamp":"2025-08-21T14:26:42.035Z"}
+{"level":"error","message":"GET /api/user/portfolio - Error: fetch failed","timestamp":"2025-08-21T15:08:52.093Z"}
+{"level":"error","message":"GET /api/user/portfolio - Error: fetch failed","timestamp":"2025-08-21T16:52:36.154Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: Amount to be sent is greater than your balance","timestamp":"2025-08-21T16:59:45.090Z"}
+{"level":"error","message":"POST /api/auth/register - Error: Failed to send email. Please try again later.","timestamp":"2025-08-27T15:20:11.496Z"}
+{"level":"error","message":"POST /api/auth/login - Error: Invalid email or password.","timestamp":"2025-08-28T07:19:35.449Z"}
+{"level":"error","message":"POST /api/auth/login - Error: Invalid email or password.","timestamp":"2025-08-28T07:19:49.157Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: Invalid amount 0","timestamp":"2025-08-28T16:37:05.818Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: Invalid amount 0","timestamp":"2025-08-28T16:37:25.044Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: Invalid amount 0","timestamp":"2025-08-28T16:40:35.297Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: Invalid amount 0","timestamp":"2025-08-28T16:41:42.874Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: Amount to be sent is greater than your balance","timestamp":"2025-08-28T16:42:31.304Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: Amount to be sent is greater than your balance","timestamp":"2025-08-28T16:43:40.474Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: Amount to be sent is greater than your balance","timestamp":"2025-08-28T16:45:14.659Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: Amount to be sent (100.502123) is greater than your balance (3.419015)","timestamp":"2025-08-28T16:15:53.268Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: Amount to be sent (0.5) + fee (100.002121) is greater than your balance (3.419015)","timestamp":"2025-08-28T16:17:59.670Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: Invalid amount 0","timestamp":"2025-08-28T16:25:25.920Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: Amount to be sent (0.02) + fee (4.002094) is greater than your balance (1.4069)","timestamp":"2025-08-28T16:28:29.968Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: ","timestamp":"2025-08-29T15:31:46.335Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: ","timestamp":"2025-08-29T15:33:37.964Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: ","timestamp":"2025-08-29T15:34:04.660Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: ","timestamp":"2025-08-29T15:34:13.319Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: ","timestamp":"2025-08-29T15:34:39.950Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: ","timestamp":"2025-08-29T15:35:08.987Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: ","timestamp":"2025-08-29T15:36:17.279Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: ","timestamp":"2025-08-29T15:37:07.777Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: ","timestamp":"2025-08-29T15:37:49.122Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: ","timestamp":"2025-08-29T15:39:27.670Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: ","timestamp":"2025-08-29T15:41:15.264Z"}
+{"level":"error","message":"POST /api/wallet/send-funds - Error: ","timestamp":"2025-08-29T15:43:04.087Z"}

@@ -1,0 +1,3 @@
+https://accurate-globally-bluegill.ngrok-free.app/invoice?recipient=umairamirr%40decryptedlabs.io&currency=USDT&amount=54
+
+https://accurate-globally-bluegill.ngrok-free.app/invoice?recipient=oQPnhXAbLbMuKHESaGrbXT17CyvWCpLyERSJA9HCYd7&currency=USDT&amount=54
