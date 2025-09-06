@@ -1,27 +1,14 @@
 import express from "express";
-import {
-  registerUser,
-  loginUser,
-  requestPasswordReset,
-  resetPassword,
-  refreshAccessToken,
-  sendVerificationEmail,
-  verifyEmail,
-} from "../../controllers/Authentication/authController";
+import { signup, login, refresh, logout, me } from "../../controllers/Authentication/authController";
+import { protect } from "../../middlewares/authMiddleware";
 
 const router = express.Router();
 
-// Authentication Routes
-router.post("/register", registerUser);
-router.post("/login", loginUser);
-router.post("/refresh-access-token", refreshAccessToken);
+router.post("/signup", signup);
+router.post("/login", login);
+router.post("/refresh", refresh);
+router.post("/logout", logout);
 
-// Verify Email Routes
-router.post("/send-verification-email", sendVerificationEmail);
-router.post("/verify-email", verifyEmail);
-
-// Password Reset Routes
-router.post("/request-password-reset", requestPasswordReset);
-router.post("/reset-password", resetPassword);
+router.get("/me", protect, me);
 
 export default router;
