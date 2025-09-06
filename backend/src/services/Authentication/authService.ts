@@ -6,7 +6,6 @@ import {
   generateRefreshToken,
 } from "../../utils/JWTTokenHelper";
 import {
-  EmailContent,
   EmailVerificationResponse,
   LoginPayload,
   LoginUserResponse,
@@ -36,8 +35,6 @@ import {
   RESET_PASSWORD_SECRET,
 } from "../../constants";
 import { frontend_url } from "../..";
-import { createSolanaWalletService } from "../Wallet/walletService";
-import { IInvoice } from "../../models/invoiceModel";
 
 // ✅ Register Service
 export const registerUserService = async ({
@@ -265,7 +262,6 @@ export const verifyEmailService = async (payload: {
   // Update the user's verification status
   user.isVerified = true;
   await user.save();
-  const response = await createSolanaWalletService(user.id);
 
   return {
     message: "Email has been verified successfully.",

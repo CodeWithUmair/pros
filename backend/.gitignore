@@ -5,3 +5,4 @@ node_modules
 # TypeChain files
 /typechain
 /typechain-types
+/src/generated/prisma

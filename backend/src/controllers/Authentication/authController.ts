@@ -1,160 +1,176 @@
 import { Request, Response, NextFunction } from "express";
-import { AppError, UnauthorizedError } from "../../utils/AppError";
-import logger from "../../utils/logger";
-import validatePayload from "../../utils/validatePayload";
-import {
-  registerSchema,
-  loginSchema,
-  requestPasswordResetSchema,
-  resetPasswordSchema,
-  sendEmailVerificationSchema,
-  verifyEmailSchema,
-} from "../../validations/Authentication/authValidation";
-import {
-  registerUserService,
-  loginUserService,
-  requestPasswordResetService,
-  resetPasswordService,
-  refreshAccessTokenService,
-  sendVerificationEmailService,
-  verifyEmailService,
-} from "../../services/Authentication/authService";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import prisma from "../../config/db";
+import { generateAccessToken, generateRefreshToken } from "../../utils/JWTTokenHelper";
+import { REFRESH_TOKEN_SECRET } from "../../constants";
+import crypto from "crypto";
 
-// ✅ Register Controller
-export const registerUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+const hash = (value: string) => crypto.createHash("sha256").update(value).digest("hex");
+
+// POST /signup
+export const signup = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    validatePayload(registerSchema, req.body);
+    const { name, email, password } = req.body;
 
-    const response = await registerUserService(req.body);
-
-    logger.info("POST /api/auth/register - Success");
-    res.status(201).json(response);
-  } catch (error: any) {
-    logger.error(`POST /api/auth/register - Error: ${error.message}`);
-    next(new AppError(error.message, error.status || 500));
-  }
-};
-
-// ✅ Login Controller
-export const loginUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    validatePayload(loginSchema, req.body);
-
-    const response = await loginUserService(req.body);
-
-    logger.info("POST /api/auth/login - Success");
-    res.status(200).json(response);
-  } catch (error: any) {
-    logger.error(`POST /api/auth/login - Error: ${error.message}`);
-    next(new AppError(error.message, error.status || 500));
-  }
-};
-
-// ✅ Refresh Access Token Controller
-export const refreshAccessToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { refreshToken } = req.body;
-
-    if (!refreshToken) {
-      throw new UnauthorizedError("Refresh token missing.");
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      res.status(400).json({ message: "Email already exists" });
+      return;
     }
 
-    const response = await refreshAccessTokenService(refreshToken);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    logger.info("POST /api/auth/refresh-token - Success");
-    res.status(200).json(response);
-  } catch (error: any) {
-    logger.error(`POST /api/auth/refresh-token - Error: ${error.message}`);
-    next(new AppError(error.message, error.status || 500));
+    const user = await prisma.user.create({
+      data: { name, email, password: hashedPassword, isVerified: true }, // set true if you don’t require email verification yet
+      select: { id: true, email: true, role: true },
+    });
+
+    // issue tokens
+    const accessToken = generateAccessToken(user.id);
+    const refreshToken = generateRefreshToken(user.id);
+
+    // store hashed refresh token on user
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { refreshTokenHash: hash(refreshToken) },
+    });
+
+    res.status(201).json({
+      message: "User created",
+      user,
+      tokens: { accessToken, refreshToken },
+    });
+  } catch (err: any) {
+    next(err);
   }
 };
 
-// ✅ Request Password Reset Controller
-export const requestPasswordReset = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+// POST /login
+export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    validatePayload(requestPasswordResetSchema, req.body);
+    const { email, password } = req.body;
 
-    const response = await requestPasswordResetService(req.body.email);
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      res.status(400).json({ message: "Invalid credentials" });
+      return;
+    }
 
-    logger.info("POST /api/auth/request-password-reset - Success");
-    res.status(200).json(response);
-  } catch (error: any) {
-    logger.error(
-      `POST /api/auth/request-password-reset - Error: ${error.message}`
-    );
-    next(new AppError(error.message, error.status || 500));
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) {
+      res.status(400).json({ message: "Invalid credentials" });
+      return;
+    }
+
+    const accessToken = generateAccessToken(user.id);
+    const refreshToken = generateRefreshToken(user.id);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { refreshTokenHash: hash(refreshToken) },
+    });
+
+    res.json({
+      message: "Login successful",
+      user: { id: user.id, email: user.email, role: user.role },
+      tokens: { accessToken, refreshToken },
+    });
+  } catch (err: any) {
+    next(err);
   }
 };
 
-// ✅ Reset Password Controller
-export const resetPassword = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+// POST /refresh
+export const refresh = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    validatePayload(resetPasswordSchema, req.body);
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      res.status(400).json({ message: "Refresh token required" });
+      return;
+    }
 
-    const response = await resetPasswordService(req.body);
+    // verify refresh token signature
+    const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET) as { id: string };
+    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
 
-    logger.info("POST /api/auth/reset-password - Success");
-    res.status(200).json(response);
-  } catch (error: any) {
-    logger.error(`POST /api/auth/reset-password - Error: ${error.message}`);
-    next(new AppError(error.message, error.status || 500));
+    if (!user || !user.refreshTokenHash) {
+      res.status(401).json({ message: "Invalid refresh token" });
+      return;
+    }
+
+    // check if provided refreshToken matches stored hash
+    if (user.refreshTokenHash !== hash(refreshToken)) {
+      res.status(401).json({ message: "Invalid refresh token" });
+      return;
+    }
+
+    // rotate
+    const newAccess = generateAccessToken(user.id);
+    const newRefresh = generateRefreshToken(user.id);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { refreshTokenHash: hash(newRefresh) },
+    });
+
+    res.json({
+      message: "Token refreshed",
+      tokens: { accessToken: newAccess, refreshToken: newRefresh },
+    });
+  } catch (err: any) {
+    next(err);
   }
 };
-// ✅ Send Email Verification Controller
-export const sendVerificationEmail = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+
+// POST /logout
+export const logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    validatePayload(sendEmailVerificationSchema, req.body);
+    const { userId } = req.body; // or extract from access token if you prefer
+    if (!userId) {
+      res.status(400).json({ message: "userId required" });
+      return;
+    }
 
-    const response = await sendVerificationEmailService(req.body);
+    await prisma.user.update({
+      where: { id: userId },
+      data: { refreshTokenHash: null },
+    });
 
-    logger.info("POST /api/auth/send-verification-email - Success");
-    res.status(200).json(response);
-  } catch (error: any) {
-    logger.error(
-      `POST /api/auth/send-verification-email - Error: ${error.message}`
-    );
-    next(new AppError(error.message, error.status || 500));
+    res.json({ message: "Logged out successfully" });
+  } catch (err: any) {
+    next(err);
   }
 };
 
-export const verifyEmail = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+// GET /me
+export const me = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    validatePayload(verifyEmailSchema, req.body);
+    // Requires protect middleware (access token)
+    const auth = req.headers.authorization;
+    if (!auth?.startsWith("Bearer ")) {
+      res.status(401).json({ message: "Not authenticated" });
+      return;
+    }
+    const token = auth.split(" ")[1];
+    const decoded = jwt.decode(token) as { id: string } | null;
+    if (!decoded?.id) {
+      res.status(401).json({ message: "Not authenticated" });
+      return;
+    }
 
-    const response = await verifyEmailService(req.body);
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+      select: { id: true, name: true, email: true, role: true },
+    });
 
-    logger.info("POST /api/auth/verify-email - Success");
-    res.status(200).json(response);
-  } catch (error: any) {
-    logger.error(`POST /api/auth/verify-email - Error: ${error.message}`);
-    next(new AppError(error.message, error.status || 500));
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.json({ user });
+  } catch (err: any) {
+    next(err);
   }
 };
