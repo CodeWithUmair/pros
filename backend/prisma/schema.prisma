@@ -23,8 +23,6 @@ model User {
   // store hashed refresh token for rotation
   refreshTokenHash String? @db.Text
 
-  // Relations...
-  sessions Session[]
   posts    Post[]
   comments Comment[]
   skills   UserSkill[]
@@ -36,14 +34,6 @@ model User {
   messagesReceived Message[]      @relation("MessagesReceived")
   Connection       Connection[]
   Notification     Notification[]
-}
-
-model Session {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-  expiresAt DateTime
 }
 
 model Post {

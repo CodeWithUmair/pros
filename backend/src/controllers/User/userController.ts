@@ -1,68 +1,61 @@
-import { Response, NextFunction } from "express";
-import logger from "../../utils/logger";
-import { AppError, UnauthorizedError, ValidationError } from "../../utils/AppError";
+import { Request, Response, NextFunction } from "express";
+import * as userService from "../../services/User/userServices";
 import { AuthenticatedRequest } from "../../types/express";
-import validatePayload from "../../utils/validatePayload";
 
-export const getUserDetails = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const getMe = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    if (!req.user) {
-      throw new UnauthorizedError("Unauthorized");
+    if (!req.user?.id) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
     }
-    const userId = req.user.id;
-    // const response = await getUserDetailsService(userId);
-    logger.info("GET /api/user/details - Success");
-    res.status(200).json(true);
-  } catch (error: any) {
-    logger.error(`GET /api/user/details - Error: ${error.message}`);
-    next(new AppError(error.message, error.status || 500));
+
+    const user = await userService.getUserById(req.user.id);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.json({ user });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const getUserPortfolio = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const updateMe = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    if (!req.user) {
-      throw new UnauthorizedError("Unauthorized");
+    if (!req.user?.id) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
     }
-    const userId = req.user.id;
 
-    // const response = await getUserPortfolioService(userId);
-    logger.info("GET /api/user/portfolio - Success");
-    res.status(200).json(true);
-  } catch (error: any) {
-    logger.error(`GET /api/user/portfolio - Error: ${error.message}`);
-    next(new AppError(error.message, error.status || 500));
+    const { name, bio } = req.body;
+
+    const updated = await userService.updateUser(req.user.id, { name, bio });
+    res.json({ message: "Profile updated", user: updated });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const getAllUsersEmails = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    if (!req.user) {
-      throw new UnauthorizedError("Unauthorized");
+    const user = await userService.getUserById(req.params.id);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
     }
-    const userId = req.user.id;
 
-    // const response = await getAllUsersEmailsService(userId);
-    logger.info("GET /api/user/all-emails - Success");
-    res.status(200).json(true);
-  } catch (error: any) {
-    logger.error(`GET /api/user/all-emails - Error: ${error.message}`);
-    next(new AppError(error.message, error.status || 500));
+    res.json({ user });
+  } catch (err) {
+    next(err);
   }
 };
 
-
-
-
+export const listUsers = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const users = await userService.listUsers();
+    res.json({ users });
+  } catch (err) {
+    next(err);
+  }
+};

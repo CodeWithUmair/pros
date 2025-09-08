@@ -7,6 +7,7 @@ import errorHandler from "./middlewares/errorHandler";
 import { PORT, NODE_ENV } from "./constants";
 import authRoutes from "./routes/Authentication/authRoutes";
 import userRoutes from "./routes/User/userRoutes";
+import cookieParser from "cookie-parser";
 
 export const frontend_url = "https://stable-pal.vercel.app";
 export const local_url = ["http://localhost:3000", "http://localhost:3001"];
@@ -23,6 +24,7 @@ const corsOptions = {
   credentials: false, // using Authorization header; no cookies
 };
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 // Disable caching globally
 app.use((_, res, next) => {
