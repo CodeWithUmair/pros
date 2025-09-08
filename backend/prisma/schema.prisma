@@ -74,18 +74,16 @@ model UserSkill {
 }
 
 model Connection {
-  id        String   @id @default(uuid())
-  userId    String
-  targetId  String
-  status    String   @default("pending") // pending | accepted | rejected
-  createdAt DateTime @default(now())
+  id          String   @id @default(uuid())
+  requesterId String
+  receiverId  String
+  status      String   @default("pending") // pending | accepted | rejected
+  createdAt   DateTime @default(now())
 
-  // 🔹 Relation to User who initiated the request
-  user User @relation("UserConnectionsInitiated", fields: [userId], references: [id], map: "Connection_userId_fk")
-
-  // 🔹 Relation to User who received the request
-  target User @relation("UserConnectionsReceived", fields: [targetId], references: [id], map: "Connection_targetId_fk")
-  User   User @relation(fields: [userId], references: [id])
+  requester User    @relation("UserConnectionsInitiated", fields: [requesterId], references: [id])
+  receiver  User    @relation("UserConnectionsReceived", fields: [receiverId], references: [id])
+  User      User?   @relation(fields: [userId], references: [id])
+  userId    String?
 }
 
 model Message {

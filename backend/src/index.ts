@@ -5,8 +5,8 @@ import helmet from "helmet";
 import morgan from "morgan";
 import errorHandler from "./middlewares/errorHandler";
 import { PORT, NODE_ENV } from "./constants";
-import authRoutes from "./routes/Authentication/authRoutes";
-import userRoutes from "./routes/User/userRoutes";
+import authRoutes from "./routes/auth.routes";
+import userRoutes from "./routes/user.routes";
 import cookieParser from "cookie-parser";
 
 export const frontend_url = "https://stable-pal.vercel.app";

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import * as userService from "../../services/User/userServices";
-import { AuthenticatedRequest } from "../../types/express";
+import * as userService from "../services/User/user.services";
+import { AuthenticatedRequest } from "../types/express";
 
 export const getMe = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
