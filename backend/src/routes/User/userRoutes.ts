@@ -1,15 +1,15 @@
 import express from "express";
+import { getMe, updateMe, getUser, listUsers } from "../../controllers/User/userController";
 import { protect } from "../../middlewares/authMiddleware";
-import {
-  getAllUsersEmails,
-  getUserDetails,
-  getUserPortfolio
-} from "../../controllers/User/userController";
 
 const router = express.Router();
 
-router.get("/details", protect, getUserDetails);
-router.get("/portfolio", protect, getUserPortfolio);
-router.get("/all-emails", protect, getAllUsersEmails);  
+// 👤 Logged-in user
+router.get("/me", protect, getMe);
+router.patch("/me", protect, updateMe);
+
+// 👥 Other users
+router.get("/", listUsers);
+router.get("/:id", getUser);
 
 export default router;
