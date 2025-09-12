@@ -80,7 +80,7 @@ const PaymentList = () => {
 
   const handleEdit = (id: string) => {
     console.log("Edit payment", id);
-    router.push(`/dashboard/payments/edit?id=${id}`);
+    router.push(`/payments/edit?id=${id}`);
   };
 
   const confirmDelete = async () => {

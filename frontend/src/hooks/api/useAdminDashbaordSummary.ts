@@ -30,7 +30,7 @@ export function useAdminDashboardSummaryGlobal(enabled: boolean = true) {
         try {
             // No params => full data, default scope=global (as implemented server-side)
             const res = await apiClient.get<AdminDashboardSummary>(
-                '/admin/dashboard/summary',
+                '/admin/summary',
                 { signal }
             );
             setData(res.data);

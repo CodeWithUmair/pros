@@ -39,7 +39,7 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>
 
-export default function RegisterPage() {
+export default function SignupPage() {
     const searchParams = useSearchParams()
     const notice = searchParams.get('notice')
     const router = useRouter()  // Using router to redirect on success or failure

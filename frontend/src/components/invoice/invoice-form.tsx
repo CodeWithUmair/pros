@@ -81,18 +81,18 @@ export default function InvoiceForm() {
             if (recurrence === "weekly" || recurrence === "monthly") {
                 await apiClient.post("/recurring-invoice", formData) // Use recurring-invoice API
                 NotifySuccess("Recurring Invoice added successfully");
-                router.push(`/dashboard/invoices`);
+                router.push(`/invoices`);
 
             } else {
                 await apiClient.post("/invoice", formData) // Use regular invoice API
                 NotifySuccess("Invoice added successfully");
-                router.push(`/dashboard/invoices`);
+                router.push(`/invoices`);
             }
 
             reset() // Reset form after successful submission
             setCcEmails([])
             setBccEmails([])
-            router.push("/dashboard/invoices");
+            router.push("/invoices");
 
         } catch (error: any) {
             // Extract API message safely

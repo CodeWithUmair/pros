@@ -28,7 +28,7 @@ apiClient.interceptors.request.use(
 
       try {
         const resp = await axios.post(
-          `${BACKEND_URL}/auth/refresh-access-token`,
+          `${BACKEND_URL}/auth/refresh`,
           { refreshToken },
           { headers: { 'Content-Type': 'application/json' } }
         )

@@ -47,7 +47,7 @@ const ReceivedInvoicesTab: React.FC<ReceivedInvoicesTabProps> = ({
 
                 {invoice.status === "pending" && (
 
-                  <Link href={`/dashboard/?invoiceId=${invoice._id}`}>
+                  <Link href={`/?invoiceId=${invoice._id}`}>
                     <Button size="sm" className="text-[10px]">Pay</Button>
                   </Link>
                 )}

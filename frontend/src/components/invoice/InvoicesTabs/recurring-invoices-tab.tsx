@@ -42,7 +42,7 @@ const RecurringInvoicesTab: React.FC<RecurringInvoicesTabProps> = ({
 
   const handleEdit = (id: string) => {
     console.log("Ahmed Raza");
-    router.push(`/dashboard/invoices/edit-invoice?id=${id}`);
+    router.push(`/invoices/edit-invoice?id=${id}`);
     console.log("Edit invoice", id);
   };
 

@@ -1,10 +1,10 @@
-import RegisterPage from '@/components/auth/register'
+import SignupPage from '@/components/auth/signup'
 import React from 'react'
 
 const Page = () => {
     return (
         <div className='flex flex-col items-center justify-center'>
-            <RegisterPage />
+            <SignupPage />
         </div>
     )
 }
