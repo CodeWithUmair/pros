@@ -141,8 +141,8 @@ export function Send({ invoiceData }: { invoiceData: InvoiceData | null }) {
       NotifySuccess(successMessage);
       setConfirmOpen(false);
       setConfirmLoading(false);
-      if (invoiceData?._id) router.push("/dashboard/invoices?receive");
-      if (rawCipher) router.push("/dashboard/history");
+      if (invoiceData?._id) router.push("/invoices?receive");
+      if (rawCipher) router.push("/history");
       await refetch();
     } catch (err: any) {
       const errorMessage = `${err.response?.data?.message || err.message || "Something went wrong!!!"
@@ -173,7 +173,7 @@ export function Send({ invoiceData }: { invoiceData: InvoiceData | null }) {
   };
 
   useEffect(() => {
-    if (pathname.startsWith("/dashboard")) {
+    if (pathname.startsWith("/")) {
       const raw = localStorage.getItem("pendingSendForm");
       if (raw) {
         try {
@@ -205,7 +205,7 @@ export function Send({ invoiceData }: { invoiceData: InvoiceData | null }) {
       decrypted = bytes.toString(CryptoJS.enc.Utf8);
     } catch (err) {
       NotifyError("Invalid Link");
-      router.push("/dashboard");
+      router.push("/");
       console.error("Decrypt error:", err);
     }
 

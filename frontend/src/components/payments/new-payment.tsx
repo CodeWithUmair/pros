@@ -347,7 +347,7 @@ export const AddNewPaymentCard = () => {
       const resp = await apiClient.post("/recurring-payments", payload);
       console.log("✅ Created:", resp.data);
       NotifySuccess("Payment created successfully");
-      router.push("/dashboard/payments");
+      router.push("/payments");
       form.reset();
     } catch (err: any) {
       NotifyError("Error creating payment");

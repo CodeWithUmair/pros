@@ -70,7 +70,7 @@ function PaymentHero() {
                     {/* CTA Button */}
                     <motion.div variants={fadeUp}>
                         <Link
-                            href={"/dashboard"}
+                            href={"/"}
                             className={cn(
                                 buttonVariants({ variant: "secondary", size: "lg" })
                             )}
@@ -89,7 +89,7 @@ function PaymentHero() {
                     className="space-y-8 w-full xl:w-2/5"
                 >
                     {/* <Link
-                        href={"/dashboard"}
+                        href={"/"}
                         className="relative drop-shadow-xl shadow-xl drop-shadow-white/50"
                     > */}
                     {/* <div className="absolute top-0 left-0 right-0 bottom-0 z-20 cursor-pointer" /> */}

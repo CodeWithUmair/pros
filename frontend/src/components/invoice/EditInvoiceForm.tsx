@@ -115,7 +115,7 @@ export default function EditInvoiceForm({ id }) {
       // Update the invoice using PUT request
       await apiClient.put(`/recurring-invoice/${id}`, formData);
       NotifySuccess("Invoice updated successfully");
-      router.push(`/dashboard/invoices?recurring`);
+      router.push(`/invoices?recurring`);
     } catch (error) {
       NotifyError("Error while updating invoice");
       console.error(error);

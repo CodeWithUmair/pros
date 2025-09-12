@@ -120,15 +120,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
         (async () => {
             setAppViewType("LOADING");
 
-            // if (isPublicHome) {
-            //     setLoading(false);
-            //     await DELAY(2);
-            //     setAppViewType("VALIDATE");
-            //     return;
-            // }
+            if (isPublicHome) {
+                setLoading(false);
+                await DELAY(2);
+                setAppViewType("VALIDATE");
+                return;
+            }
 
             if (isAuthRoute) {
-                if (isLoggedIn) router.replace("/dashboard");
+                if (isLoggedIn) router.replace("/");
                 setLoading(false);
                 await DELAY(2);
                 setAppViewType("VALIDATE");
@@ -141,7 +141,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
                 return;
             }
 
-            fetchAll(); // logged in + protected
+            if (isLoggedIn) await fetchAll();
         })();
     }, [isLoggedIn, pathname, router]);
 
@@ -157,7 +157,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
             const newUrl = pathname;
             window.history.replaceState({}, "", newUrl);
 
-            window.location.href = "/dashboard";
+            window.location.href = "/";
         }
     }, [t, r, ae, re, router, pathname]);
 

@@ -1,6 +1,6 @@
 export const userNavItems = [
-    { name: "Dashboard", href: "/dashboard" },
-    { name: "Invoices", href: "/dashboard/invoices" },
-    { name: "Payments", href: "/dashboard/payments" },
-    { name: "History", href: "/dashboard/history" },
+    { name: "Dashboard", href: "" },
+    { name: "Invoices", href: "/invoices" },
+    { name: "Payments", href: "/payments" },
+    { name: "History", href: "/history" },
 ];

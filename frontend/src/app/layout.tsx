@@ -13,8 +13,8 @@ import { UserProvider } from "@/context/user-context";
 const onest = Onest({ variable: "--font-onest", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Stable Pal",
-  description: "Stable Pal: Effortless, gasless payments on Solana—Seamlessly bridging Web2 simplicity with Web3 power, offering recurring transactions and on/off ramp features for modern businesses.",
+  title: "Pros",
+  description: "Pros: Description",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactElement }) {

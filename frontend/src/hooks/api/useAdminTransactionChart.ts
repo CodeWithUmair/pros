@@ -33,7 +33,7 @@ export function useAdminTransactionsChart(range: ChartRange = "All") {
 
             try {
                 const res = await apiClient.get<ApiResponse>(
-                    `/admin/dashboard/transactions-chart?range=${range}`
+                    `/admin/transactions-chart?range=${range}`
                 );
 
                 if (isMounted) {

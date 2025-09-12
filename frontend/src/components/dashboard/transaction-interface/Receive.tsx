@@ -90,7 +90,7 @@ export default function Receive() {
         ).toString()
 
         // Set the encrypted data state
-        const link = `${FRONTEND_URL}/dashboard/?recipientData=${encodeURIComponent(encryptedData)}`;
+        const link = `${FRONTEND_URL}/?recipientData=${encodeURIComponent(encryptedData)}`;
         setEncryptedData(link);
 
         // Open the dialog with success message
