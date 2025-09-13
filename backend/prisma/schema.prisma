@@ -20,20 +20,19 @@ model User {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  // store hashed refresh token for rotation
   refreshTokenHash String? @db.Text
 
   posts    Post[]
   comments Comment[]
   skills   UserSkill[]
 
-  connectionsInitiated Connection[] @relation("UserConnectionsInitiated")
-  connectionsReceived  Connection[] @relation("UserConnectionsReceived")
+  connectionsInitiated Connection[] @relation("RequesterConnections")
+  connectionsReceived  Connection[] @relation("ReceiverConnections")
 
-  messagesSent     Message[]      @relation("MessagesSent")
-  messagesReceived Message[]      @relation("MessagesReceived")
-  Connection       Connection[]
-  Notification     Notification[]
+  messagesSent Message[] @relation("MessagesSent")
+  messagesRecv Message[] @relation("MessagesReceived")
+
+  notifications Notification[]
 }
 
 model Post {
@@ -77,13 +76,11 @@ model Connection {
   id          String   @id @default(uuid())
   requesterId String
   receiverId  String
-  status      String   @default("pending") // pending | accepted | rejected
+  status      String   @default("pending")
   createdAt   DateTime @default(now())
 
-  requester User    @relation("UserConnectionsInitiated", fields: [requesterId], references: [id])
-  receiver  User    @relation("UserConnectionsReceived", fields: [receiverId], references: [id])
-  User      User?   @relation(fields: [userId], references: [id])
-  userId    String?
+  requester User @relation("RequesterConnections", fields: [requesterId], references: [id])
+  receiver  User @relation("ReceiverConnections", fields: [receiverId], references: [id])
 }
 
 model Message {
@@ -100,7 +97,7 @@ model Message {
 model Notification {
   id        String   @id @default(uuid())
   userId    String
-  type      String // e.g., "message", "connection", "comment"
+  type      String
   content   String
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())

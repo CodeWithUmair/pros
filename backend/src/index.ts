@@ -3,13 +3,13 @@ import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import errorHandler from "./middlewares/errorHandler";
+import errorHandler from "./middlewares/error-handler";
 import { PORT, NODE_ENV } from "./constants";
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import cookieParser from "cookie-parser";
 
-export const frontend_url = "https://stable-pal.vercel.app";
+export const frontend_url = "";
 export const local_url = ["http://localhost:3000", "http://localhost:3001"];
 
 dotenv.config();
@@ -21,7 +21,7 @@ const corsOptions = {
   origin: [...local_url, frontend_url],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: false, // using Authorization header; no cookies
+  credentials: true, // using cookies, no Authorization header
 };
 app.use(cors(corsOptions));
 app.use(cookieParser());

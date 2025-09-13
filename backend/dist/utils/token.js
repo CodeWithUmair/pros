@@ -1,0 +1,22 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.verifyRefreshToken = exports.verifyResetToken = exports.verifyEmailToken = exports.generateResetPasswordToken = exports.generateEmailVerificationToken = exports.generateRefreshToken = exports.generateAccessToken = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const constants_1 = require("../constants");
+const generateAccessToken = (userId) => jsonwebtoken_1.default.sign({ id: userId }, constants_1.ACCESS_TOKEN_SECRET, { expiresIn: `${constants_1.ACCESS_TOKEN_DURATION}s` });
+exports.generateAccessToken = generateAccessToken;
+const generateRefreshToken = (userId) => jsonwebtoken_1.default.sign({ id: userId }, constants_1.REFRESH_TOKEN_SECRET, { expiresIn: `${constants_1.REFRESH_TOKEN_DURATION}s` });
+exports.generateRefreshToken = generateRefreshToken;
+const generateEmailVerificationToken = (userId) => jsonwebtoken_1.default.sign({ id: userId }, constants_1.EMAIL_VERIFICATION_SECRET, { expiresIn: `${constants_1.EMAIL_VERIFICATION_TOKEN_DURATION}s` });
+exports.generateEmailVerificationToken = generateEmailVerificationToken;
+const generateResetPasswordToken = (userId) => jsonwebtoken_1.default.sign({ id: userId }, constants_1.RESET_PASSWORD_SECRET, { expiresIn: `${constants_1.RESET_PASSWORD_TOKEN_DURATION}s` });
+exports.generateResetPasswordToken = generateResetPasswordToken;
+const verifyEmailToken = (token) => jsonwebtoken_1.default.verify(token, constants_1.EMAIL_VERIFICATION_SECRET);
+exports.verifyEmailToken = verifyEmailToken;
+const verifyResetToken = (token) => jsonwebtoken_1.default.verify(token, constants_1.RESET_PASSWORD_SECRET);
+exports.verifyResetToken = verifyResetToken;
+const verifyRefreshToken = (token) => jsonwebtoken_1.default.verify(token, constants_1.REFRESH_TOKEN_SECRET);
+exports.verifyRefreshToken = verifyRefreshToken;
