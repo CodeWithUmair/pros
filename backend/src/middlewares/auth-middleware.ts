@@ -1,3 +1,5 @@
+// src/middlewares/auth-middleware.ts
+
 import { Response, NextFunction } from "express";
 import jwt, { TokenExpiredError, JsonWebTokenError } from "jsonwebtoken";
 import prisma from "../config/db";

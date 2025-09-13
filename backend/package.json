@@ -20,7 +20,7 @@
     "@raydium-io/raydium-sdk-v2": "^0.1.118-alpha",
     "@solana/spl-token": "^0.4.13",
     "@solana/web3.js": "^1.98.0",
-    "axios": "^1.8.2",
+    "axios": "^1.12.1",
     "bcryptjs": "^3.0.2",
     "big.js": "^6.2.2",
     "bn.js": "^5.2.1",

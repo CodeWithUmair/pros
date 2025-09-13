@@ -16,8 +16,8 @@ export const sendRequest = async (req: AuthenticatedRequest, res: Response, next
         const existing = await prisma.connection.findFirst({
             where: {
                 OR: [
-                    { userId: requesterId, targetId: receiverId },
-                    { userId: receiverId, targetId: requesterId },
+                    { requesterId, receiverId },
+                    { requesterId: receiverId, receiverId: requesterId },
                 ],
             },
         });
@@ -28,7 +28,7 @@ export const sendRequest = async (req: AuthenticatedRequest, res: Response, next
         }
 
         const conn = await prisma.connection.create({
-            data: { userId: requesterId, targetId: receiverId, status: "pending" },
+            data: { requesterId, receiverId, status: "pending" },
         });
 
         res.status(201).json(conn);
@@ -44,7 +44,7 @@ export const acceptRequest = async (req: AuthenticatedRequest, res: Response, ne
         const { id } = req.params;
 
         const conn = await prisma.connection.findUnique({ where: { id } });
-        if (!conn || conn.targetId !== userId) {
+        if (!conn || conn.receiverId !== userId) {
             res.status(403).json({ message: "Not authorized to accept this request" });
             return;
         }
@@ -67,7 +67,7 @@ export const rejectRequest = async (req: AuthenticatedRequest, res: Response, ne
         const { id } = req.params;
 
         const conn = await prisma.connection.findUnique({ where: { id } });
-        if (!conn || conn.targetId !== userId) {
+        if (!conn || conn.receiverId !== userId) {
             res.status(403).json({ message: "Not authorized to reject this request" });
             return;
         }
@@ -91,13 +91,13 @@ export const getMyConnections = async (req: AuthenticatedRequest, res: Response,
         const connections = await prisma.connection.findMany({
             where: {
                 OR: [
-                    { userId, status: "accepted" },
-                    { targetId: userId, status: "accepted" },
+                    { requesterId: userId, status: "accepted" },
+                    { receiverId: userId, status: "accepted" },
                 ],
             },
             include: {
-                user: { select: { id: true, name: true, email: true } },   // requester
-                target: { select: { id: true, name: true, email: true } }, // receiver
+                requester: { select: { id: true, name: true, email: true } }, // requester user
+                receiver: { select: { id: true, name: true, email: true } },  // receiver user
             },
         });
 

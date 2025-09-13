@@ -1,9 +1,17 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import prisma from "../../config/db";
-import { generateAccessToken, generateRefreshToken } from "../../utils/JWTTokenHelper";
-import { REFRESH_TOKEN_SECRET } from "../../constants";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  generateEmailVerificationToken,
+  generateResetPasswordToken,
+  verifyEmailToken,
+  verifyResetToken,
+  verifyRefreshToken
+} from "../../utils/token";
+import { sendVerificationEmail, sendResetPasswordEmail } from "../../utils/email";
+import { FRONTEND_URL } from "../../constants";
 
 const hash = (value: string) => crypto.createHash("sha256").update(value).digest("hex");
 
@@ -14,10 +22,16 @@ export const registerUser = async (name: string, email: string, password: string
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
-    data: { name, email, password: hashedPassword, isVerified: true },
+    data: { name, email, password: hashedPassword, isVerified: false },
     select: { id: true, email: true, role: true },
   });
 
+  // create verification token
+  const verificationToken = generateEmailVerificationToken(user.id);
+  const verificationUrl = `${FRONTEND_URL}/auth/verify-email?token=${verificationToken}`; // client route handles
+  await sendVerificationEmail(user.email, verificationUrl);
+
+  // create tokens but don't force login until verified? Up to you.
   const accessToken = generateAccessToken(user.id);
   const refreshToken = generateRefreshToken(user.id);
 
@@ -26,7 +40,33 @@ export const registerUser = async (name: string, email: string, password: string
     data: { refreshTokenHash: hash(refreshToken) },
   });
 
-  return { user, accessToken, refreshToken };
+  return { user, accessToken, refreshToken, verificationSent: true };
+};
+
+export const verifyEmail = async (token: string) => {
+  const decoded = verifyEmailToken(token);
+  const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+  if (!user) throw new Error("User not found");
+
+  if (user.isVerified) return user;
+
+  const updated = await prisma.user.update({
+    where: { id: user.id },
+    data: { isVerified: true },
+    select: { id: true, email: true, role: true, isVerified: true },
+  });
+  return updated;
+};
+
+export const resendVerification = async (email: string) => {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) throw new Error("User not found");
+  if (user.isVerified) throw new Error("User already verified");
+
+  const token = generateEmailVerificationToken(user.id);
+  const verificationUrl = `${FRONTEND_URL}/auth/verify-email?token=${token}`;
+  await sendVerificationEmail(user.email, verificationUrl);
+  return true;
 };
 
 export const loginUser = async (email: string, password: string) => {
@@ -35,6 +75,11 @@ export const loginUser = async (email: string, password: string) => {
 
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) throw new Error("Invalid credentials");
+
+  // optionally require email verification before login
+  if (!user.isVerified) {
+    throw new Error("Email not verified. Please verify your email.");
+  }
 
   const accessToken = generateAccessToken(user.id);
   const refreshToken = generateRefreshToken(user.id);
@@ -48,7 +93,8 @@ export const loginUser = async (email: string, password: string) => {
 };
 
 export const refreshTokens = async (refreshToken: string) => {
-  const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET) as { id: string };
+  // verify token signature & expiry
+  const decoded = verifyRefreshToken(refreshToken);
   const user = await prisma.user.findUnique({ where: { id: decoded.id } });
   if (!user || !user.refreshTokenHash) throw new Error("Invalid refresh token");
 
@@ -70,4 +116,38 @@ export const logoutUser = async (userId: string) => {
     where: { id: userId },
     data: { refreshTokenHash: null },
   });
+};
+
+export const forgotPassword = async (email: string) => {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) throw new Error("User not found");
+
+  const resetToken = generateResetPasswordToken(user.id);
+  const resetUrl = `${FRONTEND_URL}/auth/reset-password?token=${resetToken}`;
+  await sendResetPasswordEmail(user.email, resetUrl);
+  return true;
+};
+
+export const resetPassword = async (token: string, newPassword: string) => {
+  const decoded = verifyResetToken(token);
+  const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+  if (!user) throw new Error("User not found");
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { password: hashedPassword },
+  });
+
+  // optional: rotate refresh token (invalidate sessions)
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { refreshTokenHash: null },
+  });
+
+  return true;
+};
+
+export const verifyRefreshTokenInternal = (token: string) => {
+  return verifyRefreshToken(token); // returns { id }
 };

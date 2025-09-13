@@ -1,5 +1,18 @@
--- AlterTable
-ALTER TABLE "public"."User" ADD COLUMN     "bio" TEXT;
+-- CreateTable
+CREATE TABLE "public"."User" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "bio" TEXT,
+    "isVerified" BOOLEAN NOT NULL DEFAULT false,
+    "role" TEXT NOT NULL DEFAULT 'User',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "refreshTokenHash" TEXT,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "public"."Post" (
@@ -43,8 +56,8 @@ CREATE TABLE "public"."UserSkill" (
 -- CreateTable
 CREATE TABLE "public"."Connection" (
     "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "targetId" TEXT NOT NULL,
+    "requesterId" TEXT NOT NULL,
+    "receiverId" TEXT NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'pending',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -75,6 +88,9 @@ CREATE TABLE "public"."Notification" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "public"."User"("email");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Skill_name_key" ON "public"."Skill"("name");
 
 -- AddForeignKey
@@ -93,13 +109,10 @@ ALTER TABLE "public"."UserSkill" ADD CONSTRAINT "UserSkill_userId_fkey" FOREIGN 
 ALTER TABLE "public"."UserSkill" ADD CONSTRAINT "UserSkill_skillId_fkey" FOREIGN KEY ("skillId") REFERENCES "public"."Skill"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Connection" ADD CONSTRAINT "Connection_userId_fk" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Connection" ADD CONSTRAINT "Connection_requesterId_fkey" FOREIGN KEY ("requesterId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Connection" ADD CONSTRAINT "Connection_targetId_fk" FOREIGN KEY ("targetId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."Connection" ADD CONSTRAINT "Connection_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Connection" ADD CONSTRAINT "Connection_receiverId_fkey" FOREIGN KEY ("receiverId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Message" ADD CONSTRAINT "Message_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

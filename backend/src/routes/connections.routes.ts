@@ -1,5 +1,5 @@
 import express from "express";
-import { protect } from "../middlewares/authMiddleware";
+import { protect } from "../middlewares/auth-middleware";
 import { acceptRequest, getMyConnections, rejectRequest, sendRequest } from "../controllers/connections.controller";
 
 const router = express.Router();
