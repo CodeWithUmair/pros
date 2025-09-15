@@ -7,7 +7,7 @@ import { ArrowDownFromLine, ArrowUpFromLine } from 'lucide-react'
 import React from 'react'
 import { Send } from './Send'
 import Receive from './Receive'
-import { useUser } from '@/context/user-context'
+import { useUser } from '@/provider/user-provider'
 import { useUserAuth } from '@/hooks/useUserAuth';
 
 const TransactionInterface = () => {

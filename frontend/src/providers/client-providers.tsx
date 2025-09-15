@@ -15,7 +15,7 @@ export function ClientProviders({
         defaultTheme="system"
         enableSystem
         disableTransitionOnChange
-        enableColorScheme={false}    // still disable color-scheme style
+        enableColorScheme={false}
         forcedTheme={forcedTheme}
     >
         {children}

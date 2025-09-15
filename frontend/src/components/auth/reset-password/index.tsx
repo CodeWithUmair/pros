@@ -7,7 +7,6 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Eye, EyeOff } from 'lucide-react'
 
-import { resetPasswordAction } from '@/actions/auth.action'
 import {
     Form,
     FormField,
@@ -48,8 +47,8 @@ export default function ResetPasswordPage() {
     })
 
     const onSubmit = (values: ResetForm) => {
-        startTransition(() => {
-            resetPasswordAction({ resetToken: token, newPassword: values.newPassword })
+        startTransition(async () => {
+            // await
         })
     }
 

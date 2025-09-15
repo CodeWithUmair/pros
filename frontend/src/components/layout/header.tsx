@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { CircleUserRound, Menu } from "lucide-react";
-import { useUser } from "@/context/user-context";
+import { useUser } from "@/provider/user-provider";
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -1,12 +1,19 @@
-import { Router } from "express";
-import * as connectionController from "../controllers/connection.controller";
+import express from "express";
 import { protect } from "../middlewares/auth-middleware";
+import { sendRequest, respondToRequest, getMyConnections, getPendingRequests } from "../controllers/connection.controller";
 
-const router = Router();
+const router = express.Router();
 
-router.post("/:receiverId", protect, connectionController.sendRequest);
-router.patch("/:id/respond", protect, connectionController.respondToRequest);
-router.get("/me", protect, connectionController.getMyConnections);
-router.get("/pending", protect, connectionController.getPendingRequests);
+// POST /connections/:receiverId
+router.post("/:receiverId", protect, sendRequest);
+
+// PATCH /connections/:id/respond
+router.patch("/:id/respond", protect, respondToRequest);
+
+// GET /connections/me
+router.get("/me", protect, getMyConnections);
+
+// GET /connections/pending
+router.get("/pending", protect, getPendingRequests);
 
 export default router;

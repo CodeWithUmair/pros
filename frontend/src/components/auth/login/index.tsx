@@ -8,7 +8,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Eye, EyeOff } from 'lucide-react'
 
-import { loginUser } from '@/actions/auth.action'
 import {
     Form,
     FormField,
@@ -48,8 +47,7 @@ export default function LoginPage() {
 
     const onSubmit = (values: LoginFormValues) => {
         startTransition(async () => {
-            // this calls your server action…
-            await loginUser({ email: values.email, password: values.password })
+            // await 
         })
     }
 

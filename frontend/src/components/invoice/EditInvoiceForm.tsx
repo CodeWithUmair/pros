@@ -27,7 +27,7 @@ import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { type InvoiceFormData, invoiceSchema } from "@/lib/zodFormSchema";
 import Image from "next/image";
-import { useUser } from "@/context/user-context";
+import { useUser } from "@/provider/user-provider";
 import { Switch } from "../ui/switch";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -123,7 +123,7 @@ export default function EditInvoiceForm({ id }) {
       setUpdateLoading(false);
     }
   };
-    if (dataloading) {
+  if (dataloading) {
     return <Loader2 className="animate-spin h-6 w-6 mx-auto mt-28" />
   }
 
