@@ -9,17 +9,13 @@ import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { CircleUserRound, Menu } from "lucide-react";
-import { useUser } from "@/provider/user-provider";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { ProfileModal } from "../modals/ProfileModal";
 import { userNavItems } from "@/assets/nav-data";
-import AdminButton from "../admin/admin-button";
-import { useUserAuth } from "@/hooks/useUserAuth";
 
 export default function Header({ headerLift }: { headerLift?: boolean }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -28,9 +24,6 @@ export default function Header({ headerLift }: { headerLift?: boolean }) {
   const [lastScrollY, setLastScrollY] = useState(0);
 
   const pathname = usePathname();
-
-  const { user, loading } = useUser();
-  const isLoggedIn = useUserAuth();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -96,7 +89,6 @@ export default function Header({ headerLift }: { headerLift?: boolean }) {
 
           {/* Mobile Menu Toggle */}
           <div className="flex items-center gap-2 w-2/8 justify-end">
-            <AdminButton className="hidden sm:flex" />
             <ModeToggle className="block xl:hidden" />
 
             {/* Theme toggle */}
@@ -111,9 +103,9 @@ export default function Header({ headerLift }: { headerLift?: boolean }) {
               <Menu />
             </Button>
 
-            {loading ? (
+            {false ? (
               <></>
-            ) : isLoggedIn ? (
+            ) : true ? (
               <>
                 <DropdownMenu  >
                   <DropdownMenuTrigger asChild>
@@ -157,11 +149,6 @@ export default function Header({ headerLift }: { headerLift?: boolean }) {
 
       {/* Mobile Menu */}
       <MobileMenu isOpen={isMobileMenuOpen} onClose={toggleMobileMenu} />
-      <ProfileModal
-        isOpen={isProfileModalOpen}
-        onClose={() => setIsProfileModalOpen(false)}
-        user={user}
-      />
     </>
   );
 }
