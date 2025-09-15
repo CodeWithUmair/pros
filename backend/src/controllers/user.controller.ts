@@ -1,60 +1,57 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import * as userService from "../services/User/user.services";
 import { AuthenticatedRequest } from "../types/express";
+import { UpdateUserDTO, AddSkillDTO, RemoveSkillDTO, UpdateAvatarDTO } from "../services/User/DTO";
 
-export const getMe = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+// GET /users/me
+export const getMe = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    if (!req.user?.id) {
-      res.status(401).json({ message: "Unauthorized" });
-      return;
-    }
-
-    const user = await userService.getUserById(req.user.id);
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
-
-    res.json({ user });
+    const user = await userService.getUserById(req.user!.id);
+    res.json(user);
   } catch (err) {
     next(err);
   }
 };
 
-export const updateMe = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+// PATCH /users/me
+export const updateMe = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    if (!req.user?.id) {
-      res.status(401).json({ message: "Unauthorized" });
-      return;
-    }
-
-    const { name, bio } = req.body;
-
-    const updated = await userService.updateUser(req.user.id, { name, bio });
-    res.json({ message: "Profile updated", user: updated });
+    const dto: UpdateUserDTO = req.body;
+    const user = await userService.updateUser(req.user!.id, dto);
+    res.json(user);
   } catch (err) {
     next(err);
   }
 };
 
-export const getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+// POST /users/me/skills
+export const addSkill = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const user = await userService.getUserById(req.params.id);
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
-
-    res.json({ user });
+    const dto: AddSkillDTO = { userId: req.user!.id, skillName: req.body.skill };
+    const skill = await userService.addSkill(dto);
+    res.status(201).json(skill);
   } catch (err) {
     next(err);
   }
 };
 
-export const listUsers = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+// DELETE /users/me/skills/:skillId
+export const removeSkill = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const users = await userService.listUsers();
-    res.json({ users });
+    const dto: RemoveSkillDTO = { userId: req.user!.id, skillId: req.params.skillId };
+    await userService.removeSkill(dto);
+    res.json({ message: "Skill removed" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// PATCH /users/me/avatar
+export const updateAvatar = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const dto: UpdateAvatarDTO = { userId: req.user!.id, avatarUrl: req.body.avatarUrl };
+    const user = await userService.updateAvatar(dto);
+    res.json(user);
   } catch (err) {
     next(err);
   }

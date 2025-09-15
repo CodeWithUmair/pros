@@ -1,33 +1,22 @@
-export interface UserDetailsResponse {
-  message: string;
-  user: {
-    name: string;
-    email: string;
-    walletAddress: string | null;
-    role: "User" | "Admin";
-  };
+// src/services/User/DTO.ts
+export interface UpdateUserDTO {
+  bio?: string;
+  city?: string;
+  madhab?: string;
+  halalCareerPreference?: boolean;
 }
 
-export interface SendFundsResponse {
-  message: string;
-  txHash: string;
+export interface AddSkillDTO {
+  userId: string;
+  skillName: string;
 }
 
-export interface TokenAsset {
-  symbol: string;
-  name: string;
-  mint: string;
-  image: string;
-  balance: number;
-  decimals: number;
+export interface RemoveSkillDTO {
+  userId: string;
+  skillId: string;
 }
 
-export interface UserPortfolioResponse {
-  message: string;
-  assets: TokenAsset[];
-}
-
-export interface AllUsersEmailsResponse {
-  message: string;
-  emails: string[];
+export interface UpdateAvatarDTO {
+  userId: string;
+  avatarUrl: string;
 }

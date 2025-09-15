@@ -1,17 +1,18 @@
 import prisma from "../../config/db";
-import { User } from "@prisma/client";
+import { UpdateUserDTO, AddSkillDTO, RemoveSkillDTO, UpdateAvatarDTO } from "./DTO";
 
 export const getUserById = async (id: string) => {
     return prisma.user.findUnique({
         where: { id },
         select: {
             id: true,
-            name: true,
             email: true,
+            name: true,
             bio: true,
-            role: true,
-            isVerified: true,
-            createdAt: true,
+            city: true,
+            madhab: true,
+            halalCareerPreference: true,
+            avatar: true,
             skills: {
                 include: { skill: true },
             },
@@ -19,32 +20,36 @@ export const getUserById = async (id: string) => {
     });
 };
 
-export const updateUser = async (id: string, data: Partial<User>) => {
+export const updateUser = async (id: string, data: UpdateUserDTO) => {
     return prisma.user.update({
         where: { id },
-        data,
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            bio: true,
-            role: true,
-            isVerified: true,
-            updatedAt: true,
-        },
+        data, // already typed correctly
+        select: { id: true, bio: true, city: true, madhab: true, halalCareerPreference: true },
     });
 };
 
-export const listUsers = async () => {
-    return prisma.user.findMany({
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            bio: true,
-            role: true,
-            createdAt: true,
-        },
-        orderBy: { createdAt: "desc" },
+export const addSkill = async ({ userId, skillName }: AddSkillDTO) => {
+    let skill = await prisma.skill.findUnique({ where: { name: skillName } });
+    if (!skill) {
+        skill = await prisma.skill.create({ data: { name: skillName } });
+    }
+
+    return prisma.userSkill.create({
+        data: { userId, skillId: skill.id },
+        include: { skill: true },
+    });
+};
+
+export const removeSkill = async ({ userId, skillId }: RemoveSkillDTO) => {
+    return prisma.userSkill.deleteMany({
+        where: { userId, skillId },
+    });
+};
+
+export const updateAvatar = async ({ userId, avatarUrl }: UpdateAvatarDTO) => {
+    return prisma.user.update({
+        where: { id: userId },
+        data: { avatar: avatarUrl },
+        select: { id: true, avatar: true },
     });
 };

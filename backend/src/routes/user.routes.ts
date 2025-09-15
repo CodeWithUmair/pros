@@ -1,15 +1,20 @@
 import express from "express";
-import { getMe, updateMe, getUser, listUsers } from "../controllers/user.controller";
+import {
+    getMe,
+    updateMe,
+    addSkill,
+    removeSkill,
+    updateAvatar,
+} from "../controllers/user.controller";
 import { protect } from "../middlewares/auth-middleware";
 
 const router = express.Router();
 
-// 👤 Logged-in user
+// All user routes require authentication
 router.get("/me", protect, getMe);
 router.patch("/me", protect, updateMe);
-
-// 👥 Other users
-router.get("/", listUsers);
-router.get("/:id", getUser);
+router.post("/me/skills", protect, addSkill);
+router.delete("/me/skills/:skillId", protect, removeSkill);
+router.patch("/me/avatar", protect, updateAvatar);
 
 export default router;

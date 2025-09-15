@@ -19,7 +19,7 @@ export const ADMIN_EMAIL = "codewithumair867@gmail.com";
 
 export const RESEND_API_KEY = process.env.RESEND_API_KEY as string;
 export const FROM_EMAIL = process.env.FROM_EMAIL as string;
-export const FRONTEND_URL = process.env.FRONTEND_URL as string;
+export const FRONTEND_URL = process.env.FRONTEND_URL as string || "http://localhost:3000";
 export const COOKIE_DOMAIN = process.env.COOKIE_DOMAIN || undefined;
 
 export const ACCESS_TOKEN_DURATION = 15 * 60; // 15 minutes (recommend shorter for access)
