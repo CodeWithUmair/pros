@@ -9,11 +9,15 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
 const morgan_1 = __importDefault(require("morgan"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const error_handler_1 = __importDefault(require("./middlewares/error-handler"));
 const constants_1 = require("./constants");
+// Routes import here
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const user_routes_1 = __importDefault(require("./routes/user.routes"));
-const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const post_routes_1 = __importDefault(require("./routes/post.routes"));
+const skill_routes_1 = __importDefault(require("./routes/skill.routes"));
+const connection_routes_1 = __importDefault(require("./routes/connection.routes"));
 exports.frontend_url = "";
 exports.local_url = ["http://localhost:3000", "http://localhost:3001"];
 dotenv_1.default.config();
@@ -44,6 +48,9 @@ app.use((0, morgan_1.default)("dev"));
 // Routes
 app.use("/api/v1/auth", auth_routes_1.default);
 app.use("/api/v1/user", user_routes_1.default);
+app.use("/api/v1/posts", post_routes_1.default);
+app.use("/api/v1/skill", skill_routes_1.default);
+app.use("/api/v1/connections", connection_routes_1.default);
 // Health
 app.get("/", (_, res) => {
     res.status(200).send("Backend is running fine here ............");

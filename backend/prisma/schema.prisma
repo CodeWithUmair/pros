@@ -10,11 +10,16 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  name       String
-  email      String   @unique
-  password   String
-  bio        String?
+  id                    String   @id @default(uuid())
+  name                  String
+  email                 String   @unique
+  password              String
+  bio                   String?
+  city                  String?
+  madhab                String?
+  halalCareerPreference Boolean? // onboarding preference
+  avatar                String? // profile picture URL
+
   isVerified Boolean  @default(false)
   role       String   @default("User")
   createdAt  DateTime @default(now())
@@ -33,17 +38,21 @@ model User {
   messagesRecv Message[] @relation("MessagesReceived")
 
   notifications Notification[]
+  likes         PostLike[]
 }
 
 model Post {
   id        String   @id @default(uuid())
   content   String
+  image     String? // optional image on post
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   authorId String
-  author   User      @relation(fields: [authorId], references: [id])
+  author   User   @relation(fields: [authorId], references: [id])
+
   comments Comment[]
+  likes    PostLike[]
 }
 
 model Comment {
@@ -53,8 +62,20 @@ model Comment {
 
   authorId String
   postId   String
-  author   User   @relation(fields: [authorId], references: [id])
-  post     Post   @relation(fields: [postId], references: [id])
+
+  author User @relation(fields: [authorId], references: [id])
+  post   Post @relation(fields: [postId], references: [id])
+}
+
+model PostLike {
+  id     String @id @default(uuid())
+  userId String
+  postId String
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId]) // prevent duplicate likes
 }
 
 model Skill {
@@ -70,17 +91,21 @@ model UserSkill {
 
   user  User  @relation(fields: [userId], references: [id])
   skill Skill @relation(fields: [skillId], references: [id])
+
+  @@unique([userId, skillId])
 }
 
 model Connection {
-  id          String   @id @default(uuid())
+  id          String           @id @default(uuid())
   requesterId String
   receiverId  String
-  status      String   @default("pending")
-  createdAt   DateTime @default(now())
+  status      ConnectionStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
 
   requester User @relation("RequesterConnections", fields: [requesterId], references: [id])
   receiver  User @relation("ReceiverConnections", fields: [receiverId], references: [id])
+
+  @@unique([requesterId, receiverId])
 }
 
 model Message {
@@ -89,6 +114,7 @@ model Message {
   receiverId String
   content    String
   createdAt  DateTime @default(now())
+  seen       Boolean  @default(false)
 
   sender   User @relation("MessagesSent", fields: [senderId], references: [id])
   receiver User @relation("MessagesReceived", fields: [receiverId], references: [id])
@@ -97,10 +123,16 @@ model Message {
 model Notification {
   id        String   @id @default(uuid())
   userId    String
-  type      String
-  content   String
+  type      String // e.g. "MESSAGE", "LIKE", "COMMENT", "CONNECTION"
+  content   String // short description
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
+}
+
+enum ConnectionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }

@@ -43,7 +43,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resetPassword = exports.forgotPassword = exports.logout = exports.refresh = exports.login = exports.resendVerification = exports.verifyEmail = exports.signup = void 0;
-const authService = __importStar(require("../services/Authentication/auth.service"));
+const authService = __importStar(require("../services/Auth/auth.service"));
 const constants_1 = require("../constants");
 const cookieOptions = {
     httpOnly: true,

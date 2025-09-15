@@ -7,10 +7,10 @@ const express_1 = __importDefault(require("express"));
 const user_controller_1 = require("../controllers/user.controller");
 const auth_middleware_1 = require("../middlewares/auth-middleware");
 const router = express_1.default.Router();
-// 👤 Logged-in user
+// All user routes require authentication
 router.get("/me", auth_middleware_1.protect, user_controller_1.getMe);
 router.patch("/me", auth_middleware_1.protect, user_controller_1.updateMe);
-// 👥 Other users
-router.get("/", user_controller_1.listUsers);
-router.get("/:id", user_controller_1.getUser);
+router.post("/me/skills", auth_middleware_1.protect, user_controller_1.addSkill);
+router.delete("/me/skills/:skillId", auth_middleware_1.protect, user_controller_1.removeSkill);
+router.patch("/me/avatar", auth_middleware_1.protect, user_controller_1.updateAvatar);
 exports.default = router;

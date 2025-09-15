@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import * as authService from "../services/Authentication/auth.service";
+import * as authService from "../services/Auth/auth.service";
 import { REFRESH_TOKEN_DURATION, ACCESS_TOKEN_DURATION, COOKIE_DOMAIN } from "../constants";
 
 const cookieOptions = {

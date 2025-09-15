@@ -42,64 +42,63 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateAvatar = exports.removeSkill = exports.addSkill = exports.updateMe = exports.getMe = void 0;
-const userService = __importStar(require("../services/User/user.services"));
-// GET /users/me
-const getMe = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.unlikePost = exports.likePost = exports.createComment = exports.getFeed = exports.createPost = void 0;
+const postService = __importStar(require("../services/Post/post.service"));
+const createPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield userService.getUserById(req.user.id);
-        res.json(user);
+        const post = yield postService.createPost({
+            content: req.body.content,
+            image: req.body.image,
+            authorId: req.user.id,
+        });
+        res.status(201).json(post);
     }
     catch (err) {
         next(err);
     }
 });
-exports.getMe = getMe;
-// PATCH /users/me
-const updateMe = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.createPost = createPost;
+const getFeed = (_, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dto = req.body;
-        const user = yield userService.updateUser(req.user.id, dto);
-        res.json(user);
+        const posts = yield postService.getFeed();
+        res.json(posts);
     }
     catch (err) {
         next(err);
     }
 });
-exports.updateMe = updateMe;
-// POST /users/me/skills
-const addSkill = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getFeed = getFeed;
+const createComment = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dto = { userId: req.user.id, skillName: req.body.skill };
-        const skill = yield userService.addSkill(dto);
-        res.status(201).json(skill);
+        const comment = yield postService.createComment({
+            postId: req.params.postId,
+            content: req.body.content,
+            authorId: req.user.id,
+        });
+        res.status(201).json(comment);
     }
     catch (err) {
         next(err);
     }
 });
-exports.addSkill = addSkill;
-// DELETE /users/me/skills/:skillId
-const removeSkill = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.createComment = createComment;
+const likePost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dto = { userId: req.user.id, skillId: req.params.skillId };
-        yield userService.removeSkill(dto);
-        res.json({ message: "Skill removed" });
+        yield postService.likePost(req.params.postId, req.user.id);
+        res.json({ message: "Post liked" });
     }
     catch (err) {
         next(err);
     }
 });
-exports.removeSkill = removeSkill;
-// PATCH /users/me/avatar
-const updateAvatar = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.likePost = likePost;
+const unlikePost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dto = { userId: req.user.id, avatarUrl: req.body.avatarUrl };
-        const user = yield userService.updateAvatar(dto);
-        res.json(user);
+        yield postService.unlikePost(req.params.postId, req.user.id);
+        res.json({ message: "Post unliked" });
     }
     catch (err) {
         next(err);
     }
 });
-exports.updateAvatar = updateAvatar;
+exports.unlikePost = unlikePost;

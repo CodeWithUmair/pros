@@ -42,64 +42,60 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateAvatar = exports.removeSkill = exports.addSkill = exports.updateMe = exports.getMe = void 0;
-const userService = __importStar(require("../services/User/user.services"));
-// GET /users/me
-const getMe = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getPendingRequests = exports.getMyConnections = exports.respondToRequest = exports.sendRequest = void 0;
+const connectionService = __importStar(require("../services/Connection/connection.service"));
+// POST /connections/:receiverId
+const sendRequest = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield userService.getUserById(req.user.id);
-        res.json(user);
+        const connection = yield connectionService.sendRequest({
+            requesterId: req.user.id,
+            receiverId: req.params.receiverId,
+        });
+        res.status(201).json(connection);
     }
     catch (err) {
         next(err);
     }
 });
-exports.getMe = getMe;
-// PATCH /users/me
-const updateMe = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.sendRequest = sendRequest;
+// PATCH /connections/:id/respond
+const respondToRequest = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dto = req.body;
-        const user = yield userService.updateUser(req.user.id, dto);
-        res.json(user);
+        const connection = yield connectionService.respondToRequest({
+            connectionId: req.params.id,
+            userId: req.user.id,
+            accept: req.body.accept,
+        });
+        res.json(connection);
     }
     catch (err) {
         next(err);
     }
 });
-exports.updateMe = updateMe;
-// POST /users/me/skills
-const addSkill = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.respondToRequest = respondToRequest;
+// GET /connections/me
+const getMyConnections = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dto = { userId: req.user.id, skillName: req.body.skill };
-        const skill = yield userService.addSkill(dto);
-        res.status(201).json(skill);
+        const connections = yield connectionService.getMyConnections({
+            userId: req.user.id,
+        });
+        res.json(connections);
     }
     catch (err) {
         next(err);
     }
 });
-exports.addSkill = addSkill;
-// DELETE /users/me/skills/:skillId
-const removeSkill = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getMyConnections = getMyConnections;
+// GET /connections/pending
+const getPendingRequests = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dto = { userId: req.user.id, skillId: req.params.skillId };
-        yield userService.removeSkill(dto);
-        res.json({ message: "Skill removed" });
+        const requests = yield connectionService.getPendingRequests({
+            userId: req.user.id,
+        });
+        res.json(requests);
     }
     catch (err) {
         next(err);
     }
 });
-exports.removeSkill = removeSkill;
-// PATCH /users/me/avatar
-const updateAvatar = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const dto = { userId: req.user.id, avatarUrl: req.body.avatarUrl };
-        const user = yield userService.updateAvatar(dto);
-        res.json(user);
-    }
-    catch (err) {
-        next(err);
-    }
-});
-exports.updateAvatar = updateAvatar;
+exports.getPendingRequests = getPendingRequests;
