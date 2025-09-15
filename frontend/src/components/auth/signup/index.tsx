@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Eye, EyeOff } from 'lucide-react'  // Import Eye and EyeOff icons
 import { useSearchParams, useRouter } from 'next/navigation'
 
-import { registerUser } from '@/actions/auth.action'
 import {
     Form,
     FormField,
@@ -57,14 +56,7 @@ export default function SignupPage() {
     // Submit handler
     const onSubmit = async (values: FormData) => {
         startTransition(async () => {
-            const { name, email, password } = values
-            const result: { success: boolean; error?: string } = await registerUser({ name, email, password })
-            if (result.success) {
-                NotifySuccess("Email verification sent to your email");
-                router.push('/auth/register?notice=check-your-email')
-            } else {
-                NotifyError(result.error)  // Show error message
-            }
+           
         })
     }
 

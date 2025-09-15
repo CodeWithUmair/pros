@@ -2,7 +2,7 @@
 
 import type React from "react";
 import Image from "next/image";
-import { useUser } from "@/context/user-context";
+import { useUser } from "@/provider/user-provider";
 import type { Invoice } from "@/types/invoices.types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

@@ -8,7 +8,7 @@ import {
 } from '../ui/dialog'
 import Image from 'next/image'
 import { Button } from '../ui/button'
-import { useUser } from '@/context/user-context'
+import { useUser } from '@/provider/user-provider'
 
 interface ErrorOrSuccessModalProps {
     open: boolean

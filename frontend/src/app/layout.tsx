@@ -8,7 +8,7 @@ import { ClientProviders } from "@/providers/client-providers";
 import { Toaster } from 'react-hot-toast';
 import ErrorBoundaryWrapper from "@/components/layout/ErrorBoundaryWrapper";
 import { geist } from "@/components/layout/font";
-import { UserProvider } from "@/context/user-context";
+import { UserProvider } from "@/provider/user-provider";
 
 const onest = Onest({ variable: "--font-onest", subsets: ["latin"] });
 

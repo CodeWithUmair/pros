@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select";
 import { AddPaymentForm, addPaymentSchema } from "@/lib/zodFormSchema";
 import { Plus, X } from "lucide-react";
-import { useUser } from "@/context/user-context";
+import { useUser } from "@/provider/user-provider";
 import Image from "next/image";
 import apiClient from "@/lib/axiosClient";
 import { NotifyError, NotifySuccess } from "@/components/helper/common";

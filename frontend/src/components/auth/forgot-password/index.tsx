@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useSearchParams } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 
-import { requestPasswordReset } from '@/actions/auth.action'
 import {
     Form,
     FormField,
@@ -38,9 +37,7 @@ export default function ForgotPasswordPage() {
 
     const onSubmit = (values: ForgotForm) => {
         startTransition(() => {
-            if (values.email) {
-                requestPasswordReset(values as { email: string })
-            }
+        
         })
     }
 
