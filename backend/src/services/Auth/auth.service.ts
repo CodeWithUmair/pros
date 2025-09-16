@@ -151,7 +151,3 @@ export const resetPassword = async (token: string, newPassword: string) => {
 
   return true;
 };
-
-export const verifyRefreshTokenInternal = (token: string) => {
-  return verifyRefreshToken(token); // returns { id }
-};
