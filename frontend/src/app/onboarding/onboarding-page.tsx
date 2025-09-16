@@ -1,16 +1,20 @@
 "use client";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import CustomSelect from "@/components/ui/custom-select";
 import { api } from "@/lib/api";
+import { useUser } from "@/providers/user-provider";
 
 const steps = ["Basic Info", "Skills", "Preferences", "Finish"];
 
 export default function OnboardingPage() {
     const [step, setStep] = useState(0);
+    const { user } = useUser();
+
     const [form, setForm] = useState({
         name: "",
         city: "",
@@ -38,6 +42,22 @@ export default function OnboardingPage() {
             console.error("Error saving onboarding:", err);
         }
     };
+
+    // update form once user is available
+    useEffect(() => {
+        if (user) {
+            setForm((prev) => ({
+                ...prev,
+                name: user.name ?? "",
+                city: user.city ?? "",
+                bio: user.bio ?? "",
+                skills: user.skills ?? [],
+                halalCareerPreference: !!user.halalCareerPreference,
+                madhab: user.madhab ?? "",
+            }));
+        }
+    }, [user]);
+
 
     return (
         < >
