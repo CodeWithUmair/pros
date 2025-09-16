@@ -1,12 +1,12 @@
 // app/auth/login/page.tsx
-'use client'
+"use client";
 
-import React, { useEffect, useTransition, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useSearchParams, useRouter } from 'next/navigation'
-import { Eye, EyeOff } from 'lucide-react'
+import React, { useTransition, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useSearchParams } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 
 import {
     Form,
@@ -15,54 +15,47 @@ import {
     FormLabel,
     FormControl,
     FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
-
-const loginSchema = z.object({
-    email: z.string().email({ message: 'Please enter a valid email address.' }),
-    password: z.string().min(1, { message: 'Password is required.' }),
-})
-
-type LoginFormValues = z.infer<typeof loginSchema>
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useLogin } from "@/hooks/useAuth";
+import { loginSchema, LoginInput } from "@/lib/schemas/auth";
 
 export default function LoginPage() {
-    const searchParams = useSearchParams()
-    const router = useRouter()
-    const [isPending, startTransition] = useTransition()
+    const searchParams = useSearchParams();
+    const [showPassword, setShowPassword] = useState(false);
 
-    // Password visibility toggle state
-    const [showPassword, setShowPassword] = useState(false)
+    const notice = searchParams.get("notice");
+    const verified = searchParams.get("verified");
+    const errorParam = searchParams.get("error");
 
-    const notice = searchParams.get('notice')
-    const verified = searchParams.get('verified')
-    const errorParam = searchParams.get('error')
-
-    // React Hook Form + Zod
-    const form = useForm<LoginFormValues>({
+    const form = useForm<LoginInput>({
         resolver: zodResolver(loginSchema),
-        defaultValues: { email: '', password: '' },
-    })
+        defaultValues: { email: "", password: "" },
+    });
 
-    const onSubmit = (values: LoginFormValues) => {
-        startTransition(async () => {
-            // await 
-        })
-    }
+    const { mutate, isPending } = useLogin();
+
+    const onSubmit = (values: LoginInput) => {
+        mutate(values);
+    };
 
     return (
         <div className="max-w-md mx-auto mt-20 space-y-4">
             <h1 className="text-2xl font-semibold text-center">Login</h1>
 
-            {notice === 'account-exists' && (
-                <p className="text-primary">An account already exists. Please log in.</p>
+            {notice === "account-exists" && (
+                <p className="text-primary text-center">
+                    An account already exists. Please log in.
+                </p>
             )}
-            {verified === '1' && (
-                <p className="text-success">Your email was verified — please log in.</p>
+            {verified === "1" && (
+                <p className="text-success text-center">
+                    Your email was verified — please log in.
+                </p>
             )}
-            {errorParam === 'invalid' && (
-                <p className="text-destructive">Invalid credentials. Try again.</p>
+            {errorParam === "invalid" && (
+                <p className="text-destructive text-center">Invalid credentials. Try again.</p>
             )}
 
             <Form {...form}>
@@ -74,7 +67,11 @@ export default function LoginPage() {
                             <FormItem>
                                 <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="you@example.com" type="email" {...field} />
+                                    <Input
+                                        placeholder="you@example.com"
+                                        type="email"
+                                        {...field}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -88,13 +85,12 @@ export default function LoginPage() {
                             <FormItem>
                                 <FormLabel>Password</FormLabel>
                                 <FormControl className="relative">
-                                    <div className='w-full'>
+                                    <div className="w-full">
                                         <Input
                                             placeholder="Password"
-                                            type={showPassword ? 'text' : 'password'}
+                                            type={showPassword ? "text" : "password"}
                                             {...field}
                                         />
-                                        {/* Toggle Visibility Icon */}
                                         <div
                                             className="absolute right-3 top-3 cursor-pointer"
                                             onClick={() => setShowPassword(!showPassword)}
@@ -109,21 +105,18 @@ export default function LoginPage() {
                     />
 
                     <Button type="submit" loading={isPending} className="w-full">
-                        {isPending ? 'Logging in…' : 'Login'}
+                        {isPending ? "Logging in…" : "Login"}
                     </Button>
                 </form>
             </Form>
 
             <div className="flex items-center justify-between mt-6">
-                {/* New User message with link to registration */}
                 <p className="text-center text-sm">
-                    {`Don't have an account?`}{' '}
-                    <Link href="/auth/register" className="underline text-primaryOnly">
-                        Register here
+                    Don&apos;t have an account?{" "}
+                    <Link href="/auth/signup" className="underline text-primaryOnly">
+                        Signup here
                     </Link>
                 </p>
-
-                {/* ← new “Forgot Password?” link */}
                 <p className="text-right text-sm">
                     <Link href="/auth/forgot-password" className="underline">
                         Forgot your password?
@@ -131,5 +124,5 @@ export default function LoginPage() {
                 </p>
             </div>
         </div>
-    )
+    );
 }

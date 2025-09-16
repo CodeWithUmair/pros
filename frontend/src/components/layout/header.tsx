@@ -138,7 +138,7 @@ export default function Header({ headerLift }: { headerLift?: boolean }) {
                 <Link href={"/auth/login"} passHref>
                   <Button variant="primaryOutline">Sign In</Button>
                 </Link>
-                <Link href={"/auth/register"} passHref className="hidden sm:block">
+                <Link href={"/auth/signup"} passHref className="hidden sm:block">
                   <Button>Sign Up</Button>
                 </Link>
               </>

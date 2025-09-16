@@ -23,7 +23,7 @@ export default function VerifiedEmailPage() {
         }
 
         api
-            .post('/auth/verify-email', { verifyEmailToken: token })
+            .get(`/auth/verify-email?token=${token}`)
             .then(() => {
                 setStatus('success')
             })
@@ -31,11 +31,9 @@ export default function VerifiedEmailPage() {
                 const code = err?.response?.status
                 const msg = err?.response?.data?.message || 'Verification failed.'
                 if (code === 409) {
-                    // Already verified → go straight to login
                     router.replace('/auth/login?verified=1')
                     return
                 }
-                // For 401 or any other error, show message
                 setErrorCode(code)
                 setErrorMessage(msg)
                 setStatus('error')
@@ -64,7 +62,7 @@ export default function VerifiedEmailPage() {
         }
     }, [status, router])
 
-    // ─── Render ────────────────────────────────────────────────────────
+    // ─── Render ─────────────────────────────────────────────
     if (status === 'verifying') {
         return <p className="mt-20 text-center">Verifying your email…</p>
     }
@@ -74,17 +72,11 @@ export default function VerifiedEmailPage() {
             <div className="mt-20 max-w-md mx-auto text-center space-y-4">
                 <p className="text-destructive">{errorMessage}</p>
                 {errorCode === 401 ? (
-                    <a
-                        href="/auth/register"
-                        className="underline"
-                    >
+                    <a href="/auth/signup" className="underline">
                         Request a new verification link
                     </a>
                 ) : (
-                    <a
-                        href="/auth/register"
-                        className="underline"
-                    >
+                    <a href="/auth/signup" className="underline">
                         Resend verification email
                     </a>
                 )}
@@ -101,8 +93,7 @@ export default function VerifiedEmailPage() {
                 If you’re not redirected automatically,{' '}
                 <a href="/auth/login?verified=1" className="underline">
                     click here
-                </a>
-                .
+                </a>.
             </p>
         </div>
     )

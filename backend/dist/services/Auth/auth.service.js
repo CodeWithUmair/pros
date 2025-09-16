@@ -19,6 +19,7 @@ const db_1 = __importDefault(require("../../config/db"));
 const token_1 = require("../../utils/token");
 const email_1 = require("../../utils/email");
 const constants_1 = require("../../constants");
+const AppError_1 = require("../../utils/AppError");
 const hash = (value) => crypto_1.default.createHash("sha256").update(value).digest("hex");
 const registerUser = (name, email, password) => __awaiter(void 0, void 0, void 0, function* () {
     const existing = yield db_1.default.user.findUnique({ where: { email } });
@@ -73,13 +74,12 @@ exports.resendVerification = resendVerification;
 const loginUser = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield db_1.default.user.findUnique({ where: { email } });
     if (!user)
-        throw new Error("Invalid credentials");
+        throw new AppError_1.UnauthorizedError("Invalid credentials");
     const ok = yield bcryptjs_1.default.compare(password, user.password);
     if (!ok)
-        throw new Error("Invalid credentials");
-    // optionally require email verification before login
+        throw new AppError_1.UnauthorizedError("Invalid credentials");
     if (!user.isVerified) {
-        throw new Error("Email not verified. Please verify your email.");
+        throw new AppError_1.UnauthorizedError("Email not verified. Please verify your email.");
     }
     const accessToken = (0, token_1.generateAccessToken)(user.id);
     const refreshToken = (0, token_1.generateRefreshToken)(user.id);
@@ -87,7 +87,11 @@ const loginUser = (email, password) => __awaiter(void 0, void 0, void 0, functio
         where: { id: user.id },
         data: { refreshTokenHash: hash(refreshToken) },
     });
-    return { user: { id: user.id, email: user.email, role: user.role }, accessToken, refreshToken };
+    return {
+        user: { id: user.id, email: user.email, role: user.role },
+        accessToken,
+        refreshToken,
+    };
 });
 exports.loginUser = loginUser;
 const refreshTokens = (refreshToken) => __awaiter(void 0, void 0, void 0, function* () {
