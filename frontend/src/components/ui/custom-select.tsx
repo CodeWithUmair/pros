@@ -7,14 +7,14 @@ import { Button } from "./button";
 import { Asset } from "@/types/user.types";
 
 interface CustomSelectProps {
-    assets: Asset[];
+    data: Asset[];
     value: string;
     onChange: (value: string) => void;
 }
 
-export default function CustomSelect({ assets, value, onChange }: CustomSelectProps) {
+export default function CustomSelect({ data, value, onChange }: CustomSelectProps) {
     const [open, setOpen] = useState(false);
-    const selected = assets.find((a) => a.mint === value);
+    const selected = data.find((a) => a.id === value);
 
     return (
         <div className="relative w-full">
@@ -44,11 +44,11 @@ export default function CustomSelect({ assets, value, onChange }: CustomSelectPr
             {/* Dropdown */}
             {open && (
                 <ul className="absolute z-50 mt-1 w-full rounded-md border bg-card shadow-md max-h-60 overflow-y-auto">
-                    {assets.map((asset) => (
+                    {data.map((asset) => (
                         <li
-                            key={asset.mint}
+                            key={asset.id}
                             onClick={() => {
-                                onChange(asset.mint);
+                                onChange(asset.id);
                                 setOpen(false);
                             }}
                             className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted cursor-pointer"
