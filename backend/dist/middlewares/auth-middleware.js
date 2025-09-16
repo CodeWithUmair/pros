@@ -51,33 +51,66 @@ const jsonwebtoken_1 = __importStar(require("jsonwebtoken"));
 const db_1 = __importDefault(require("../config/db"));
 const constants_1 = require("../constants");
 const AppError_1 = require("../utils/AppError");
-const protect = (req, _res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const protect = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
         const token = (_a = req.cookies) === null || _a === void 0 ? void 0 : _a.accessToken;
         if (!token) {
-            throw new AppError_1.UnauthorizedError("Access token missing.");
+            res.clearCookie("accessToken", {
+                httpOnly: true,
+                sameSite: "lax",
+                secure: process.env.NODE_ENV === "production",
+            });
+            res.status(401).json({ message: "Access token missing." });
+            return;
         }
         const decoded = jsonwebtoken_1.default.verify(token, constants_1.ACCESS_TOKEN_SECRET);
-        if (!(decoded === null || decoded === void 0 ? void 0 : decoded.id))
-            throw new AppError_1.UnauthorizedError("Invalid token payload.");
+        if (!(decoded === null || decoded === void 0 ? void 0 : decoded.id)) {
+            res.clearCookie("accessToken", {
+                httpOnly: true,
+                sameSite: "lax",
+                secure: process.env.NODE_ENV === "production",
+            });
+            res.status(401).json({ message: "Invalid token payload." });
+            return;
+        }
         const user = yield db_1.default.user.findUnique({
             where: { id: decoded.id },
             select: { id: true, role: true, email: true, isVerified: true },
         });
-        if (!user)
-            throw new AppError_1.UnauthorizedError("User not found.");
+        if (!user) {
+            res.clearCookie("accessToken", {
+                httpOnly: true,
+                sameSite: "lax",
+                secure: process.env.NODE_ENV === "production",
+            });
+            res.status(401).json({ message: "User not found." });
+            return;
+        }
         req.user = { id: user.id, role: user.role || "User" };
         next();
     }
     catch (err) {
         if (err instanceof jsonwebtoken_1.TokenExpiredError) {
-            return next(new AppError_1.UnauthorizedError("Token expired, please login again."));
+            res.clearCookie("accessToken", {
+                httpOnly: true,
+                sameSite: "lax",
+                secure: process.env.NODE_ENV === "production",
+            });
+            res.status(401).json({ message: "Token expired, please login again." });
+            return;
         }
         if (err instanceof jsonwebtoken_1.JsonWebTokenError) {
-            return next(new AppError_1.UnauthorizedError("Invalid token."));
+            res.clearCookie("accessToken", {
+                httpOnly: true,
+                sameSite: "lax",
+                secure: process.env.NODE_ENV === "production",
+            });
+            res.status(401).json({ message: "Invalid token." });
+            return;
         }
-        next(new AppError_1.AppError(err.message || "Unauthorized", 401));
+        // fallback for unexpected errors
+        next(new AppError_1.AppError("Unauthorized", 401));
     }
 });
 exports.protect = protect;
