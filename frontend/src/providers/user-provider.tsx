@@ -1,8 +1,15 @@
 "use client";
 import { createContext, useContext } from "react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { User } from "@/types/user.types";
 
-const UserContext = createContext<any>(null);
+type UserContextType = {
+    user: User | undefined;
+    isLoading: boolean;
+    error: unknown;
+};
+
+const UserContext = createContext<UserContextType | null>(null);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
     const { data: user, isLoading, error } = useCurrentUser();
@@ -15,5 +22,9 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useUser() {
-    return useContext(UserContext);
+    const context = useContext(UserContext);
+    if (!context) {
+        throw new Error("useUser must be used within a UserProvider");
+    }
+    return context;
 }

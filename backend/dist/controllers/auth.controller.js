@@ -51,7 +51,7 @@ const cookieOptions = {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     domain: constants_1.COOKIE_DOMAIN,
-    path: "/api/v1/auth",
+    path: "/",
     maxAge: constants_1.REFRESH_TOKEN_DURATION * 1000,
 };
 const signup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -61,7 +61,7 @@ const signup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         // Set refresh cookie
         res.cookie("refreshToken", refreshToken, cookieOptions);
         // Optionally set access token cookie (short lived)
-        res.cookie("accessToken", accessToken, Object.assign(Object.assign({}, cookieOptions), { maxAge: constants_1.ACCESS_TOKEN_DURATION * 1000 }));
+        res.cookie("accessToken", accessToken, Object.assign(Object.assign({}, cookieOptions), { maxAge: constants_1.ACCESS_TOKEN_DURATION * 1000, path: "/" }));
         res.status(201).json({ message: "User created. Verification email sent.", user: user });
     }
     catch (err) {
@@ -139,20 +139,20 @@ const logout = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         else if ((_b = req.body) === null || _b === void 0 ? void 0 : _b.userId) {
             yield authService.logoutUser(req.body.userId);
         }
-        // 🧹 Clear cookies (must match original options!)
+        // 🧹 Clear cookies (must match original set options!)
         res.clearCookie("refreshToken", {
             httpOnly: true,
             sameSite: "lax",
             secure: process.env.NODE_ENV === "production",
             domain: constants_1.COOKIE_DOMAIN,
-            path: "/api/v1/auth", // 🔑 must match set path
+            path: "/", // ✅ fixed to match the cookieOptions
         });
         res.clearCookie("accessToken", {
             httpOnly: true,
             sameSite: "lax",
             secure: process.env.NODE_ENV === "production",
             domain: constants_1.COOKIE_DOMAIN,
-            path: "/", // 🔑 must match set path
+            path: "/", // ✅ matches set path
         });
         res.json({ message: "Logged out successfully" });
     }
