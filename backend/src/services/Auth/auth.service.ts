@@ -12,6 +12,7 @@ import {
 } from "../../utils/token";
 import { sendVerificationEmail, sendResetPasswordEmail } from "../../utils/email";
 import { FRONTEND_URL } from "../../constants";
+import { UnauthorizedError } from "../../utils/AppError";
 
 const hash = (value: string) => crypto.createHash("sha256").update(value).digest("hex");
 
@@ -71,14 +72,13 @@ export const resendVerification = async (email: string) => {
 
 export const loginUser = async (email: string, password: string) => {
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) throw new Error("Invalid credentials");
+  if (!user) throw new UnauthorizedError("Invalid credentials");
 
   const ok = await bcrypt.compare(password, user.password);
-  if (!ok) throw new Error("Invalid credentials");
+  if (!ok) throw new UnauthorizedError("Invalid credentials");
 
-  // optionally require email verification before login
   if (!user.isVerified) {
-    throw new Error("Email not verified. Please verify your email.");
+    throw new UnauthorizedError("Email not verified. Please verify your email.");
   }
 
   const accessToken = generateAccessToken(user.id);
@@ -89,7 +89,11 @@ export const loginUser = async (email: string, password: string) => {
     data: { refreshTokenHash: hash(refreshToken) },
   });
 
-  return { user: { id: user.id, email: user.email, role: user.role }, accessToken, refreshToken };
+  return {
+    user: { id: user.id, email: user.email, role: user.role },
+    accessToken,
+    refreshToken,
+  };
 };
 
 export const refreshTokens = async (refreshToken: string) => {

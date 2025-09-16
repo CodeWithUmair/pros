@@ -10,7 +10,7 @@
 {"level":"error","message":"GET /api/user/portfolio - Error: fetch failed","timestamp":"2025-08-21T15:08:52.093Z"}
 {"level":"error","message":"GET /api/user/portfolio - Error: fetch failed","timestamp":"2025-08-21T16:52:36.154Z"}
 {"level":"error","message":"POST /api/wallet/send-funds - Error: Amount to be sent is greater than your balance","timestamp":"2025-08-21T16:59:45.090Z"}
-{"level":"error","message":"POST /api/auth/register - Error: Failed to send email. Please try again later.","timestamp":"2025-08-27T15:20:11.496Z"}
+{"level":"error","message":"POST /api/auth/signup - Error: Failed to send email. Please try again later.","timestamp":"2025-08-27T15:20:11.496Z"}
 {"level":"error","message":"POST /api/auth/login - Error: Invalid email or password.","timestamp":"2025-08-28T07:19:35.449Z"}
 {"level":"error","message":"POST /api/auth/login - Error: Invalid email or password.","timestamp":"2025-08-28T07:19:49.157Z"}
 {"level":"error","message":"POST /api/wallet/send-funds - Error: Invalid amount 0","timestamp":"2025-08-28T16:37:05.818Z"}
