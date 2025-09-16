@@ -12,7 +12,7 @@ export type User = {
 };
 
 export type Asset = {
-  mint: string;
+  id: string;
   name: string;
   symbol: string;
   image: string;
