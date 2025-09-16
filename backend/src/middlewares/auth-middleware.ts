@@ -1,21 +1,27 @@
 // src/middlewares/auth-middleware.ts
 
-import { Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import jwt, { TokenExpiredError, JsonWebTokenError } from "jsonwebtoken";
 import prisma from "../config/db";
-import { AuthenticatedRequest } from "../types/express";
 import { ACCESS_TOKEN_SECRET } from "../constants";
-import { AppError, UnauthorizedError } from "../utils/AppError";
+import { AppError } from "../utils/AppError";
+import { AuthenticatedRequest } from "../types/express";
 
-export const protect = async (
+export const protect: RequestHandler = async (
   req: AuthenticatedRequest,
-  _res: Response,
+  res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     const token = req.cookies?.accessToken;
     if (!token) {
-      throw new UnauthorizedError("Access token missing.");
+      res.clearCookie("accessToken", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      });
+      res.status(401).json({ message: "Access token missing." });
+      return;
     }
 
     const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET) as {
@@ -24,24 +30,55 @@ export const protect = async (
       exp: number;
     };
 
-    if (!decoded?.id) throw new UnauthorizedError("Invalid token payload.");
+    if (!decoded?.id) {
+      res.clearCookie("accessToken", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      });
+      res.status(401).json({ message: "Invalid token payload." });
+      return;
+    }
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
       select: { id: true, role: true, email: true, isVerified: true },
     });
 
-    if (!user) throw new UnauthorizedError("User not found.");
+    if (!user) {
+      res.clearCookie("accessToken", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      });
+      res.status(401).json({ message: "User not found." });
+      return;
+    }
 
     req.user = { id: user.id, role: user.role || "User" };
     next();
-  } catch (err: any) {
+  } catch (err) {
     if (err instanceof TokenExpiredError) {
-      return next(new UnauthorizedError("Token expired, please login again."));
+      res.clearCookie("accessToken", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      });
+      res.status(401).json({ message: "Token expired, please login again." });
+      return;
     }
+
     if (err instanceof JsonWebTokenError) {
-      return next(new UnauthorizedError("Invalid token."));
+      res.clearCookie("accessToken", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      });
+      res.status(401).json({ message: "Invalid token." });
+      return;
     }
-    next(new AppError(err.message || "Unauthorized", 401));
+
+    // fallback for unexpected errors
+    next(new AppError("Unauthorized", 401));
   }
 };

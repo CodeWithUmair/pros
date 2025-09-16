@@ -23,7 +23,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
     res.cookie("accessToken", accessToken, {
       ...cookieOptions,
       maxAge: ACCESS_TOKEN_DURATION * 1000,
-      path: "/", // so protect middleware can pick it up if needed
+      // path: "/", // so protect middleware can pick it up if needed
     });
 
     res.status(201).json({ message: "User created. Verification email sent.", user: user });

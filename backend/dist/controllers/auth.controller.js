@@ -60,7 +60,7 @@ const signup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         // Set refresh cookie
         res.cookie("refreshToken", refreshToken, cookieOptions);
         // Optionally set access token cookie (short lived)
-        res.cookie("accessToken", accessToken, Object.assign(Object.assign({}, cookieOptions), { maxAge: constants_1.ACCESS_TOKEN_DURATION * 1000, path: "/" }));
+        res.cookie("accessToken", accessToken, Object.assign(Object.assign({}, cookieOptions), { maxAge: constants_1.ACCESS_TOKEN_DURATION * 1000 }));
         res.status(201).json({ message: "User created. Verification email sent.", user: user });
     }
     catch (err) {
