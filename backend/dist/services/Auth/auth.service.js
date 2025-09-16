@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyRefreshTokenInternal = exports.resetPassword = exports.forgotPassword = exports.logoutUser = exports.refreshTokens = exports.loginUser = exports.resendVerification = exports.verifyEmail = exports.registerUser = void 0;
+exports.resetPassword = exports.forgotPassword = exports.logoutUser = exports.refreshTokens = exports.loginUser = exports.resendVerification = exports.verifyEmail = exports.registerUser = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const crypto_1 = __importDefault(require("crypto"));
 const db_1 = __importDefault(require("../../config/db"));
@@ -146,7 +146,3 @@ const resetPassword = (token, newPassword) => __awaiter(void 0, void 0, void 0, 
     return true;
 });
 exports.resetPassword = resetPassword;
-const verifyRefreshTokenInternal = (token) => {
-    return (0, token_1.verifyRefreshToken)(token); // returns { id }
-};
-exports.verifyRefreshTokenInternal = verifyRefreshTokenInternal;

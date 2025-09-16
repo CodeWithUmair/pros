@@ -45,6 +45,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.resetPassword = exports.forgotPassword = exports.logout = exports.refresh = exports.login = exports.resendVerification = exports.verifyEmail = exports.signup = void 0;
 const authService = __importStar(require("../services/Auth/auth.service"));
 const constants_1 = require("../constants");
+const token_1 = require("../utils/token");
 const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -125,24 +126,34 @@ exports.refresh = refresh;
 const logout = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
-        // read refresh token to identify user if provided, or expect body.userId
         const refreshToken = (_a = req.cookies) === null || _a === void 0 ? void 0 : _a.refreshToken;
         if (refreshToken) {
-            // verify to get user id
             try {
-                const decoded = yield authService.verifyRefreshTokenInternal(refreshToken); // we'll implement below
+                const decoded = (0, token_1.verifyRefreshToken)(refreshToken); // { id }
                 yield authService.logoutUser(decoded.id);
             }
             catch (_c) {
-                // ignore if invalid
+                // ignore invalid/expired token
             }
         }
         else if ((_b = req.body) === null || _b === void 0 ? void 0 : _b.userId) {
             yield authService.logoutUser(req.body.userId);
         }
-        // clear cookies
-        res.clearCookie("refreshToken", { path: "/api/v1/auth", domain: constants_1.COOKIE_DOMAIN });
-        res.clearCookie("accessToken", { path: "/", domain: constants_1.COOKIE_DOMAIN });
+        // 🧹 Clear cookies (must match original options!)
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
+            domain: constants_1.COOKIE_DOMAIN,
+            path: "/api/v1/auth", // 🔑 must match set path
+        });
+        res.clearCookie("accessToken", {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
+            domain: constants_1.COOKIE_DOMAIN,
+            path: "/", // 🔑 must match set path
+        });
         res.json({ message: "Logged out successfully" });
     }
     catch (err) {
@@ -172,3 +183,6 @@ const resetPassword = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.resetPassword = resetPassword;
+const verifyRefreshTokenInternal = (token) => {
+    return (0, token_1.verifyRefreshToken)(token); // returns { id }
+};

@@ -22,7 +22,10 @@ export const FROM_EMAIL = process.env.FROM_EMAIL as string;
 export const FRONTEND_URL = process.env.FRONTEND_URL as string || "http://localhost:3000";
 export const COOKIE_DOMAIN = process.env.COOKIE_DOMAIN || undefined;
 
-export const ACCESS_TOKEN_DURATION = 15 * 60; // 15 minutes (recommend shorter for access)
-export const REFRESH_TOKEN_DURATION = 7 * 24 * 60 * 60; // 7 days
+export const ACCESS_TOKEN_DURATION = 1 * 60; 
+export const REFRESH_TOKEN_DURATION = 5 * 60; 
+
+// export const ACCESS_TOKEN_DURATION = 15 * 60; // 15 minutes (recommend shorter for access)
+// export const REFRESH_TOKEN_DURATION = 7 * 24 * 60 * 60; // 7 days
 export const EMAIL_VERIFICATION_TOKEN_DURATION = 24 * 60 * 60; // 1 day
 export const RESET_PASSWORD_TOKEN_DURATION = 60 * 60; // 1 hour
