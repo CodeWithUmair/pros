@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { api } from '@/lib/api'
+import Confetti from 'react-confetti'
+import { useWindowSize } from 'react-use'
 
 export default function VerifiedEmailPage() {
     const searchParams = useSearchParams()
@@ -13,6 +15,9 @@ export default function VerifiedEmailPage() {
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [errorCode, setErrorCode] = useState<number | null>(null)
     const [count, setCount] = useState(5)
+
+    // 👇 get screen size for confetti
+    const { width, height } = useWindowSize()
 
     // 1️⃣ Verify on mount
     useEffect(() => {
@@ -84,9 +89,26 @@ export default function VerifiedEmailPage() {
         )
     }
 
-    // status === 'success'
+    // ✅ status === 'success'
     return (
         <div className="max-w-md mx-auto mt-20 text-center">
+            {/* 🎉 Confetti */}
+            <Confetti
+                width={width}
+                height={height}
+                numberOfPieces={400}
+                recycle={false}
+                gravity={0.2}                // makes it fall down smoothly
+                initialVelocityY={5}         // downward velocity
+                confettiSource={{            // start from top
+                    x: 0,
+                    y: 0,
+                    w: width,
+                    h: 0,
+                }}
+                className='absolute top-0 left-0'
+            />
+
             <h1 className="text-2xl font-semibold mb-4">Email Verified!</h1>
             <p className="mb-2">Thank you — you’ll be redirected to login in {count} seconds.</p>
             <p className="text-sm text-gray-500">

@@ -5,8 +5,8 @@ import Header from "@/components/layout/header";
 import { onest } from "@/components/layout/font";
 
 export const metadata: Metadata = {
-    title: "Authentication: Stable Pal",
-    description: "Stable Pal: Effortless, gasless payments on Solana—Seamlessly bridging Web2 simplicity with Web3 power, offering recurring transactions and on/off ramp features for modern businesses.",
+    title: "Authentication: Pros",
+    description: "Pros",
 };
 
 export default async function AuthLayout({ children }: { children: React.ReactElement }) {

@@ -35,11 +35,22 @@ export default function SignupPage() {
         defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
     })
 
-    const signupMutation = useSignup()
+    // Watch password live
+    const passwordValue = form.watch("password");
+
+    // Password strength checks
+    const passwordChecks = [
+        { label: "At least 8 characters", test: (val: string) => val.length >= 8 },
+        { label: "One uppercase letter", test: (val: string) => /[A-Z]/.test(val) },
+        { label: "One number", test: (val: string) => /[0-9]/.test(val) },
+        { label: "One special character", test: (val: string) => /[!@#$%^&*]/.test(val) },
+    ];
+
+    const { mutateAsync, isPending } = useSignup()
 
     const onSubmit = async (values: SignupInput) => {
         try {
-            await signupMutation.mutateAsync(values)
+            await mutateAsync(values)
             NotifySuccess("Account created successfully!")
         } catch (err: any) {
             NotifyError(err.message || "Signup failed")
@@ -110,7 +121,7 @@ export default function SignupPage() {
                                         <Input
                                             placeholder="Password"
                                             className="w-full"
-                                            type={showPassword ? 'text' : 'password'}
+                                            type={showPassword ? "text" : "password"}
                                             {...field}
                                         />
                                         <div
@@ -121,6 +132,21 @@ export default function SignupPage() {
                                         </div>
                                     </div>
                                 </FormControl>
+                                {/* Password Strength Checklist */}
+                                <ul className="mt-2 space-y-1 text-sm">
+                                    {passwordChecks.map((check, i) => {
+                                        const passed = check.test(passwordValue || "");
+                                        return (
+                                            <li key={i} className="flex items-center gap-2">
+                                                <span
+                                                    className={`w-2 h-2 rounded-full ${passed ? "bg-green-500" : "bg-red-500"
+                                                        }`}
+                                                ></span>
+                                                {check.label}
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -155,14 +181,10 @@ export default function SignupPage() {
 
                     <Button
                         type="submit"
-                        disabled={signupMutation.isPending}
+                        loading={isPending}
                         className="w-full"
                     >
-                        {signupMutation.isPending ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            'Register'
-                        )}
+                        Signup
                     </Button>
                 </form>
             </Form>
