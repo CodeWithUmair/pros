@@ -4,10 +4,15 @@ import { useState } from "react";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 import { Button } from "./button";
-import { Asset } from "@/types/user.types";
+
+type TestProps = {
+    id: string;
+    image: string;
+    symbol: string;
+}
 
 interface CustomSelectProps {
-    data: Asset[];
+    data: TestProps[];
     value: string;
     onChange: (value: string) => void;
 }
@@ -22,7 +27,7 @@ export default function CustomSelect({ data, value, onChange }: CustomSelectProp
             <Button
                 type="button"
                 onClick={() => setOpen(!open)}
-                className="w-full flex items-center hover:bg-transparent justify-between rounded-md bg-transparent px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring text-muted-foreground hover:text-foreground text-sm xl:text-base 3xl:text-lg"
+                className="w-full flex items-center border hover:bg-transparent justify-between rounded-md bg-transparent px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring text-muted-foreground hover:text-foreground text-sm xl:text-base 3xl:text-lg"
             >
                 {selected ? (
                     <div className="flex items-center gap-2">
@@ -36,7 +41,7 @@ export default function CustomSelect({ data, value, onChange }: CustomSelectProp
                         <span>{selected.symbol}</span>
                     </div>
                 ) : (
-                    <span >Choose a token</span>
+                    <span >Choose Skille</span>
                 )}
                 <ChevronDown className="size-6" />
             </Button>
