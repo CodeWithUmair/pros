@@ -13,16 +13,13 @@ export default async function AuthLayout({ children }: { children: React.ReactEl
 
     return (
         <div
-            className={`${onest.className} antialiased min-h-screen w-full h-full bg-bg`}
+            className={`${onest.className} antialiased min-h-screen w-full h-full bg-bg flex items-center justify-center`}
             suppressHydrationWarning
         >
             <Container className="space-y-2 sm:space-y-4">
-                <Header />
+                {/* <Header /> */}
                 {children}
             </Container>
-            <br />
-            <br />
-            <br />
         </div>
     );
 }
