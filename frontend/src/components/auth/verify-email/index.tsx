@@ -91,7 +91,7 @@ export default function VerifiedEmailPage() {
 
     // ✅ status === 'success'
     return (
-        <div className="max-w-md mx-auto mt-20 text-center">
+        <div className="max-w-md mx-auto text-center">
             {/* 🎉 Confetti */}
             <Confetti
                 width={width}

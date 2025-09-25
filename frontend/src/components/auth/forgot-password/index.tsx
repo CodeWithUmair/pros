@@ -37,14 +37,14 @@ export default function ForgotPasswordPage() {
 
     const onSubmit = (values: ForgotForm) => {
         startTransition(() => {
-        
+
         })
     }
 
     // If notice=check-email, show banner instead of form
     if (notice === 'check-email') {
         return (
-            <div className="max-w-md mx-auto mt-20 text-center">
+            <div className="max-w-md mx-auto text-center">
                 <h1 className="text-2xl font-semibold mb-4">Check Your Inbox</h1>
                 <p>
                     If that email is registered, you’ll receive a link to reset your password.
@@ -54,7 +54,7 @@ export default function ForgotPasswordPage() {
     }
 
     return (
-        <div className="max-w-md mx-auto mt-20">
+        <div className="max-w-md mx-auto">
             {error === 'failed' && (
                 <p className="mb-4 text-destructive">Could not send reset link. Try again.</p>
             )}

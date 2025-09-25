@@ -55,7 +55,7 @@ export default function ResetPasswordPage() {
     // Show success banner if password was reset
     if (notice === 'password-reset') {
         return (
-            <div className="max-w-md mx-auto mt-20 text-center">
+            <div className="max-w-md mx-auto text-center">
                 <h1 className="text-2xl font-semibold mb-4">Password Reset</h1>
                 <p>Your password has been successfully reset.</p>
                 <p className="mt-4">
@@ -69,7 +69,7 @@ export default function ResetPasswordPage() {
 
     // Otherwise show the reset form
     return (
-        <div className="max-w-md mx-auto mt-20">
+        <div className="max-w-md mx-auto">
             {error === 'failed' && (
                 <p className="mb-4 text-destructive">Failed to reset password. Try again.</p>
             )}

@@ -41,7 +41,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-20 space-y-4">
+        <div className="max-w-md mx-auto space-y-4">
             <h1 className="text-2xl font-semibold text-center">Login</h1>
 
             {notice === "account-exists" && (
