@@ -34,7 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactEl
           color="#055BF0"
           showSpinner={false} />
         <Toaster
-          position="bottom-right"
+          position="top-center"
           reverseOrder={false}
         />
         <ClientProviders forcedTheme={theme}>
