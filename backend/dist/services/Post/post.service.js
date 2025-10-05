@@ -25,9 +25,16 @@ const getFeedService = () => __awaiter(void 0, void 0, void 0, function* () {
     return db_1.default.post.findMany({
         orderBy: { createdAt: "desc" },
         include: {
-            author: true,
+            author: {
+                select: { id: true, name: true, avatar: true },
+            },
             comments: {
-                include: { author: true },
+                orderBy: { createdAt: "desc" },
+                include: {
+                    author: {
+                        select: { id: true, name: true, avatar: true },
+                    },
+                },
             },
             likes: true,
         },
@@ -37,7 +44,15 @@ exports.getFeedService = getFeedService;
 const createCommentService = (data) => __awaiter(void 0, void 0, void 0, function* () {
     return db_1.default.comment.create({
         data,
-        include: { author: true },
+        include: {
+            author: {
+                select: {
+                    id: true,
+                    name: true,
+                    avatar: true,
+                },
+            },
+        },
     });
 });
 exports.createCommentService = createCommentService;
@@ -57,17 +72,15 @@ const unlikePostService = (postId, userId) => __awaiter(void 0, void 0, void 0, 
 exports.unlikePostService = unlikePostService;
 const deletePostService = (postId, userId) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield db_1.default.post.findUnique({ where: { id: postId } });
-    if (!post) {
+    if (!post)
         return { success: false, status: 404, message: "Post not found" };
-    }
-    if (post.authorId !== userId) {
-        return {
-            success: false,
-            status: 403,
-            message: "You can delete only your own posts",
-        };
-    }
+    if (post.authorId !== userId)
+        return { success: false, status: 403, message: "You can delete only your own posts" };
+    // Delete related data first
+    yield db_1.default.comment.deleteMany({ where: { postId } });
+    yield db_1.default.postLike.deleteMany({ where: { postId } });
+    // Now delete the post safely
     yield db_1.default.post.delete({ where: { id: postId } });
-    return { success: true, status: 200 };
+    return { success: true };
 });
 exports.deletePostService = deletePostService;
