@@ -42,11 +42,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unlikePost = exports.likePost = exports.createComment = exports.getFeed = exports.createPost = void 0;
+exports.deletePost = exports.unlikePost = exports.likePost = exports.createComment = exports.getFeed = exports.createPost = void 0;
 const postService = __importStar(require("../services/Post/post.service"));
 const createPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const post = yield postService.createPost({
+        const post = yield postService.createPostService({
             content: req.body.content,
             image: req.body.image,
             authorId: req.user.id,
@@ -60,7 +60,7 @@ const createPost = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 exports.createPost = createPost;
 const getFeed = (_, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const posts = yield postService.getFeed();
+        const posts = yield postService.getFeedService();
         res.json(posts);
     }
     catch (err) {
@@ -70,7 +70,7 @@ const getFeed = (_, res, next) => __awaiter(void 0, void 0, void 0, function* ()
 exports.getFeed = getFeed;
 const createComment = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const comment = yield postService.createComment({
+        const comment = yield postService.createCommentService({
             postId: req.params.postId,
             content: req.body.content,
             authorId: req.user.id,
@@ -84,7 +84,7 @@ const createComment = (req, res, next) => __awaiter(void 0, void 0, void 0, func
 exports.createComment = createComment;
 const likePost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield postService.likePost(req.params.postId, req.user.id);
+        yield postService.likePostService(req.params.postId, req.user.id);
         res.json({ message: "Post liked" });
     }
     catch (err) {
@@ -94,7 +94,7 @@ const likePost = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
 exports.likePost = likePost;
 const unlikePost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield postService.unlikePost(req.params.postId, req.user.id);
+        yield postService.unlikePostService(req.params.postId, req.user.id);
         res.json({ message: "Post unliked" });
     }
     catch (err) {
@@ -102,3 +102,19 @@ const unlikePost = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.unlikePost = unlikePost;
+const deletePost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.user.id;
+        const { postId } = req.params;
+        const result = yield postService.deletePostService(postId, userId);
+        if (!result.success) {
+            res.status(result.status).json({ message: result.message });
+            return;
+        }
+        res.status(200).json({ message: "Post deleted successfully" });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.deletePost = deletePost;

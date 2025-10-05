@@ -1,29 +1,8 @@
-// src/hooks/usePosts.ts
-"use client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-
-export interface Post {
-    id: string;
-    content: string;
-    image?: string;
-    createdAt: string;
-    author: {
-        id: string;
-        name: string;
-        avatar?: string;
-        city?: string;
-    };
-    comments: {
-        id: string;
-        content: string;
-        author: { id: string; name: string; avatar?: string };
-    }[];
-    likes: { id: string; userId: string }[];
-}
 
 export function useFeed() {
-    return useQuery<Post[]>({
+    return useQuery({
         queryKey: ["feed"],
         queryFn: async () => {
             const { data } = await api.get("/posts");
@@ -35,12 +14,58 @@ export function useFeed() {
 export function useCreatePost() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (payload: { content: string; image?: string }) => {
+        mutationFn: async (payload: { content: string }) => {
             const { data } = await api.post("/posts", payload);
             return data;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["feed"] });
         },
+    });
+}
+
+export function useLikePost() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (postId: string) => {
+            await api.post(`/posts/${postId}/like`);
+        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["feed"] }),
+    });
+}
+
+export function useUnlikePost() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (postId: string) => {
+            await api.delete(`/posts/${postId}/like`);
+        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["feed"] }),
+    });
+}
+
+export function useDeletePost() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (postId: string) => {
+            await api.delete(`/posts/${postId}`);
+        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["feed"] }),
+    });
+}
+
+export function useCommentPost() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async ({
+            postId,
+            content,
+        }: {
+            postId: string;
+            content: string;
+        }) => {
+            await api.post(`/posts/${postId}/comments`, { content });
+        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["feed"] }),
     });
 }

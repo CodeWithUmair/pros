@@ -12,16 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unlikePost = exports.likePost = exports.createComment = exports.getFeed = exports.createPost = void 0;
+exports.deletePostService = exports.unlikePostService = exports.likePostService = exports.createCommentService = exports.getFeedService = exports.createPostService = void 0;
 const db_1 = __importDefault(require("../../config/db"));
-const createPost = (data) => __awaiter(void 0, void 0, void 0, function* () {
+const createPostService = (data) => __awaiter(void 0, void 0, void 0, function* () {
     return db_1.default.post.create({
         data,
         include: { author: true },
     });
 });
-exports.createPost = createPost;
-const getFeed = () => __awaiter(void 0, void 0, void 0, function* () {
+exports.createPostService = createPostService;
+const getFeedService = () => __awaiter(void 0, void 0, void 0, function* () {
     return db_1.default.post.findMany({
         orderBy: { createdAt: "desc" },
         include: {
@@ -33,25 +33,41 @@ const getFeed = () => __awaiter(void 0, void 0, void 0, function* () {
         },
     });
 });
-exports.getFeed = getFeed;
-const createComment = (data) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getFeedService = getFeedService;
+const createCommentService = (data) => __awaiter(void 0, void 0, void 0, function* () {
     return db_1.default.comment.create({
         data,
         include: { author: true },
     });
 });
-exports.createComment = createComment;
-const likePost = (postId, userId) => __awaiter(void 0, void 0, void 0, function* () {
+exports.createCommentService = createCommentService;
+const likePostService = (postId, userId) => __awaiter(void 0, void 0, void 0, function* () {
     return db_1.default.postLike.upsert({
         where: { userId_postId: { userId, postId } },
         update: {},
         create: { userId, postId },
     });
 });
-exports.likePost = likePost;
-const unlikePost = (postId, userId) => __awaiter(void 0, void 0, void 0, function* () {
+exports.likePostService = likePostService;
+const unlikePostService = (postId, userId) => __awaiter(void 0, void 0, void 0, function* () {
     return db_1.default.postLike.deleteMany({
         where: { postId, userId },
     });
 });
-exports.unlikePost = unlikePost;
+exports.unlikePostService = unlikePostService;
+const deletePostService = (postId, userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const post = yield db_1.default.post.findUnique({ where: { id: postId } });
+    if (!post) {
+        return { success: false, status: 404, message: "Post not found" };
+    }
+    if (post.authorId !== userId) {
+        return {
+            success: false,
+            status: 403,
+            message: "You can delete only your own posts",
+        };
+    }
+    yield db_1.default.post.delete({ where: { id: postId } });
+    return { success: true, status: 200 };
+});
+exports.deletePostService = deletePostService;

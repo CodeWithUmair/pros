@@ -35,3 +35,16 @@ export const NotifyError = (msg: string, durationInMs?: number) => {
         console.log("🚀 ~ NotifyError ~ error:", error)
     }
 };
+
+export const getTimeAgo = (date: string) => {
+    const now = new Date();
+    const created = new Date(date);
+    const diff = Math.floor((now.getTime() - created.getTime()) / 1000); // seconds
+
+    const hours = Math.floor(diff / 3600);
+    const minutes = Math.floor((diff % 3600) / 60);
+
+    if (hours > 0) return `${hours}h ${minutes}m ago`;
+    if (minutes > 0) return `${minutes}m ago`;
+    return 'Just now';
+};
