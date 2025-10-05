@@ -210,9 +210,20 @@ export default function FeedPage() {
                                 <ScrollArea className="max-h-60 overflow-auto rounded-md border border-muted-foreground/20 p-2">
                                     {p.comments?.length > 0 ? (
                                         p.comments.map((c) => (
-                                            <div key={c.id} className="text-sm border-b pb-1">
-                                                <span className="font-semibold">{c.author.name}:</span>{" "}
-                                                {c.content}
+                                            <div key={c.id} className="text-sm border-b pb-1 my-2 space-y-2">
+                                                <div className="flex items-center gap-2">
+                                                    <Avatar className="w-10 h-10">
+                                                        {c.author.avatar ? (
+                                                            <AvatarImage src={c.author.avatar} alt={c.author.name} />
+                                                        ) : (
+                                                            <AvatarFallback>{c.author.name[0]}</AvatarFallback>
+                                                        )}
+                                                    </Avatar>
+                                                    <span className="font-semibold">{c.author.name}:</span>
+                                                </div>
+                                                <p>
+                                                    {c.content}
+                                                </p>
                                             </div>
                                         ))
                                     ) : (

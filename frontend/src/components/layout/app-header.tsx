@@ -25,7 +25,7 @@ export function AppHeader() {
     const truncatedName = user.name.length > 20 ? user.name.slice(0, 17) + "..." : user.name;
 
     return (
-        <header className="w-full flex items-center justify-between px-4 py-2 border-b border-muted-foreground bg-background">
+        <header className="fixed z-50 top-0 left-0 right-0 w-full flex items-center justify-between px-4 py-2 border-b border-muted-foreground bg-background">
             {/* Logo */}
             <div className="flex items-center gap-2">
                 <Image src="/images/logo.svg" alt="Logo" width={40} height={40} />

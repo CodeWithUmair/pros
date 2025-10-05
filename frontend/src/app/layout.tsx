@@ -27,7 +27,7 @@ export default async function RootLayout({ children }: { children: React.ReactEl
     // optional: suppress warnings on root to silence any tiny mismatch
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${onest.variable} ${geist.variable} ${onest.className} antialiased`}
+        className={`${onest.variable} ${geist.variable} ${onest.className} antialiased bg-bg`}
         suppressHydrationWarning
       >
         <NextTopLoader
@@ -41,7 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactEl
         <ClientProviders forcedTheme={theme}>
           <UserProvider>
             <ErrorBoundaryWrapper>
-              <main className="min-h-screen w-full h-full bg-bg font-geist">
+              <main className="min-h-screen pt-14 w-full h-full font-geist">
                 <AppHeader />
                 {children}
               </main>

@@ -1,7 +1,6 @@
 // app/dashboard/layout.tsx
 import type { Metadata } from "next";
 import Container from "@/components/layout/container";
-import Header from "@/components/layout/header";
 import { onest } from "@/components/layout/font";
 
 export const metadata: Metadata = {
@@ -13,11 +12,10 @@ export default async function AuthLayout({ children }: { children: React.ReactEl
 
     return (
         <div
-            className={`${onest.className} antialiased min-h-screen w-full h-full bg-bg flex items-center justify-center`}
+            className={`${onest.className} antialiased min-h-screen w-full h-full flex items-center justify-center`}
             suppressHydrationWarning
         >
             <Container className="space-y-2 sm:space-y-4">
-                {/* <Header /> */}
                 {children}
             </Container>
         </div>
