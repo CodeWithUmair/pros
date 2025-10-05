@@ -28,6 +28,8 @@ const buttonVariants = cva(
           "bg-grey5 text-muted-foreground hover:bg-grey5/80",
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        ghostDropdown:
+          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         ghostDestructive:
           "hover:bg-destructive text-destructive hover:text-white dark:hover:bg-destructive/50",
         icon:

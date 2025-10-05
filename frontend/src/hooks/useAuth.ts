@@ -53,7 +53,7 @@ export function useLogout() {
         mutationFn: () => logout(),
         onSuccess: () => {
             queryClient.clear(); // wipe all queries (user, posts, etc.)
-            router.push("/auth/login");
+            // router.push("/auth/login");
         },
     });
 }

@@ -2,21 +2,23 @@
 
 import React from "react";
 import Image from "next/image";
-import { Cog, LogOut } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuTrigger,
     DropdownMenuContent,
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetClose } from "@/components/ui/sheet";
+import { Sheet, SheetTrigger, SheetContent, SheetHeader } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { cn } from "@/lib/utils";
 import { ModeToggle } from "./theme-toggle";
+import { useLogout } from "@/hooks/useAuth";
+import { Button } from "../ui/button";
 
 export function AppHeader() {
     const { data: user } = useCurrentUser();
+    const { mutate: logout, isPending: isLoggingOut } = useLogout();
 
     if (!user) return null;
 
@@ -26,7 +28,7 @@ export function AppHeader() {
         <header className="w-full flex items-center justify-between px-4 py-2 border-b border-muted-foreground bg-background">
             {/* Logo */}
             <div className="flex items-center gap-2">
-                <Image src="/logo.png" alt="Logo" width={40} height={40} />
+                <Image src="/images/logo.svg" alt="Logo" width={40} height={40} />
             </div>
 
             {/* User info */}
@@ -47,12 +49,14 @@ export function AppHeader() {
                 <div className="hidden sm:block">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Cog className="w-6 h-6 cursor-pointer" />
+                            <Settings className="w-6 h-6 cursor-pointer" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <ModeToggle />
-                            <DropdownMenuItem onClick={() => console.log("Logout")}>
-                                <LogOut className="w-4 h-4 mr-2" /> Logout
+                            <DropdownMenuItem asChild disabled={isLoggingOut} variant="ghost">
+                                <Button onClick={() => logout()} variant="ghost" className="w-full rounded-md justify-start">
+                                    <LogOut className="w-4 h-4" /> Logout
+                                </Button>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -62,7 +66,7 @@ export function AppHeader() {
                 <div className="sm:hidden">
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Cog className="w-6 h-6 cursor-pointer" />
+                            <Settings className="w-6 h-6 cursor-pointer" />
                         </SheetTrigger>
                         <SheetContent side="right" className="p-4">
                             <SheetHeader>
