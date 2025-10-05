@@ -12,4 +12,5 @@ router.get("/", auth_middleware_1.protect, post_controller_1.getFeed);
 router.post("/:postId/comments", auth_middleware_1.protect, post_controller_1.createComment);
 router.post("/:postId/like", auth_middleware_1.protect, post_controller_1.likePost);
 router.delete("/:postId/like", auth_middleware_1.protect, post_controller_1.unlikePost);
+router.delete("/:postId", auth_middleware_1.protect, post_controller_1.deletePost);
 exports.default = router;
