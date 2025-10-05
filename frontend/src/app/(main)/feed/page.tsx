@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import PageLoader from "@/components/layout/page-loader";
 import { toast } from "react-hot-toast";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -134,7 +134,13 @@ export default function FeedPage() {
             {posts.map((p) => (
                 <Card key={p.id}>
                     <CardHeader className="flex flex-row items-center gap-3">
-                        <Avatar className="w-10 h-10" />
+                        <Avatar className="w-10 h-10">
+                            {p.author.avatar ? (
+                                <AvatarImage src={p.author.avatar} alt={p.author.name} />
+                            ) : (
+                                <AvatarFallback>{p.author.name[0]}</AvatarFallback>
+                            )}
+                        </Avatar>
                         <div>
                             <p className="font-semibold">{p.author.name}</p>
                             <p className="text-xs text-muted-foreground">{getTimeAgo(p.createdAt)}</p>
@@ -149,7 +155,7 @@ export default function FeedPage() {
                         )}
 
                         {/* Actions */}
-                        <div className="flex items-center gap-3 mt-4">
+                        <div className="flex items-center justify-end gap-3 mt-4">
                             <Button
                                 variant="outline"
                                 onClick={() => handleLike(p.id, p.likes)}

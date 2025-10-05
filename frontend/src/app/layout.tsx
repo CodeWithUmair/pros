@@ -9,6 +9,7 @@ import { Toaster } from 'react-hot-toast';
 import ErrorBoundaryWrapper from "@/components/layout/ErrorBoundaryWrapper";
 import { geist } from "@/components/layout/font";
 import { UserProvider } from "@/providers/user-provider";
+import { AppHeader } from "@/components/layout/app-header";
 
 const onest = Onest({ variable: "--font-onest", subsets: ["latin"] });
 
@@ -41,6 +42,7 @@ export default async function RootLayout({ children }: { children: React.ReactEl
           <UserProvider>
             <ErrorBoundaryWrapper>
               <main className="min-h-screen w-full h-full bg-bg font-geist">
+                <AppHeader />
                 {children}
               </main>
             </ErrorBoundaryWrapper>
