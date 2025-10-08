@@ -44,6 +44,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateAvatar = exports.removeSkill = exports.addSkill = exports.updateMe = exports.getMe = void 0;
 const userService = __importStar(require("../services/User/user.services"));
+const upload_1 = require("../utils/upload");
 // GET /users/me
 const getMe = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -94,9 +95,16 @@ exports.removeSkill = removeSkill;
 // PATCH /users/me/avatar
 const updateAvatar = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dto = { userId: req.user.id, avatarUrl: req.body.avatarUrl };
-        const user = yield userService.updateAvatar(dto);
-        res.json(user);
+        const file = req.file; // assuming multer is used
+        if (!file)
+            return res.status(400).json({ message: "No file uploaded" });
+        const url = yield (0, upload_1.uploadAvatar)(file.buffer, file.originalname, file.mimetype);
+        // Update user in DB
+        const updatedUser = yield userService.updateAvatar({
+            userId: req.user.id,
+            avatarUrl: url,
+        });
+        res.json(updatedUser);
     }
     catch (err) {
         next(err);

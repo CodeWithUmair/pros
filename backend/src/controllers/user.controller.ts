@@ -2,6 +2,7 @@ import { Response, NextFunction } from "express";
 import * as userService from "../services/User/user.services";
 import { AuthenticatedRequest } from "../types/express";
 import { UpdateUserDTO, AddSkillDTO, RemoveSkillDTO, UpdateAvatarDTO } from "../services/User/DTO";
+import { uploadAvatar } from "../utils/upload";
 
 // GET /users/me
 export const getMe = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -47,11 +48,20 @@ export const removeSkill = async (req: AuthenticatedRequest, res: Response, next
 };
 
 // PATCH /users/me/avatar
-export const updateAvatar = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const updateAvatar = async (req: any, res: any, next: any) => {
   try {
-    const dto: UpdateAvatarDTO = { userId: req.user!.id, avatarUrl: req.body.avatarUrl };
-    const user = await userService.updateAvatar(dto);
-    res.json(user);
+    const file = req.file; // assuming multer is used
+    if (!file) return res.status(400).json({ message: "No file uploaded" });
+
+    const url = await uploadAvatar(file.buffer, file.originalname, file.mimetype);
+
+    // Update user in DB
+    const updatedUser = await userService.updateAvatar({
+      userId: req.user.id,
+      avatarUrl: url,
+    });
+
+    res.json(updatedUser);
   } catch (err) {
     next(err);
   }
