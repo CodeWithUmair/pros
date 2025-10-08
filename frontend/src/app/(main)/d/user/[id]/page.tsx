@@ -4,10 +4,13 @@ import { useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useUserById } from '@/hooks/user/useUser'
 import { useSendConnection, useRespondConnection } from '@/hooks/user/useConnections'
+import { useQueryClient } from '@tanstack/react-query'
 
 export default function UserProfilePage() {
     const { id } = useParams()
     const userId = Array.isArray(id) ? id[0] : id
+
+    const queryClient = useQueryClient()
 
     const { data: profile, isLoading } = useUserById(userId)
     const { mutate: sendConnection, isPending: isSending } = useSendConnection()
@@ -19,18 +22,51 @@ export default function UserProfilePage() {
 
     const handleSendRequest = () => {
         if (connectionStatus === "NONE" && userId) {
-            sendConnection(userId)
+            sendConnection(userId, {
+                onSuccess: () => {
+                    // ✅ Optimistically update the cache so UI updates immediately
+                    queryClient.setQueryData(['user', userId], (oldData: any) => {
+                        if (!oldData) return oldData
+                        return { ...oldData, connectionStatus: "PENDING_SENT" }
+                    })
+
+                    // ✅ Optionally, re-fetch user profile for accurate status
+                    queryClient.invalidateQueries({ queryKey: ['user', userId] })
+                },
+            })
         }
     }
 
     const handleAccept = () => {
         if (!profile?.pendingConnectionId) return
-        respondConnection({ connectionId: profile.pendingConnectionId, accept: true })
+        respondConnection(
+            { connectionId: profile.pendingConnectionId, accept: true },
+            {
+                onSuccess: () => {
+                    queryClient.setQueryData(['user', userId], (oldData: any) => {
+                        if (!oldData) return oldData
+                        return { ...oldData, connectionStatus: "ACCEPTED" }
+                    })
+                    queryClient.invalidateQueries({ queryKey: ['user', userId] })
+                },
+            }
+        )
     }
 
     const handleReject = () => {
         if (!profile?.pendingConnectionId) return
-        respondConnection({ connectionId: profile.pendingConnectionId, accept: false })
+        respondConnection(
+            { connectionId: profile.pendingConnectionId, accept: false },
+            {
+                onSuccess: () => {
+                    queryClient.setQueryData(['user', userId], (oldData: any) => {
+                        if (!oldData) return oldData
+                        return { ...oldData, connectionStatus: "REJECTED" }
+                    })
+                    queryClient.invalidateQueries({ queryKey: ['user', userId] })
+                },
+            }
+        )
     }
 
     return (
@@ -69,7 +105,7 @@ export default function UserProfilePage() {
                 </div>
             )}
 
-            {connectionStatus === "ACCEPTED" && <Button disabled>Connected</Button>}
+            {connectionStatus === "ACCEPTED" && <Button disabled>Friend</Button>}
             {connectionStatus === "REJECTED" && <Button disabled>Rejected</Button>}
         </div>
     )
