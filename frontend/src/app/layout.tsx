@@ -41,8 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactEl
         <ClientProviders forcedTheme={theme}>
           <UserProvider>
             <ErrorBoundaryWrapper>
-              <main className="min-h-screen pt-14 w-full h-full font-geist">
-                <AppHeader />
+              <main className="min-h-screen w-full h-full font-geist">
                 {children}
               </main>
             </ErrorBoundaryWrapper>
