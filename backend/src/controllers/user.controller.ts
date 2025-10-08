@@ -14,6 +14,20 @@ export const getMe = async (req: AuthenticatedRequest, res: Response, next: Next
   }
 };
 
+// GET /user/:id
+export const getUserById = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const user = await userService.getUserById(req.params.id, req.user!.id);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+};
+
 // PATCH /users/me
 export const updateMe = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
