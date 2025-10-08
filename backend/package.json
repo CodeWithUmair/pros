@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.ts",
     "build": "tsc",
-    "start": "nodemon dist/index.js"
+    "start": "nodemon dist/index.js",
+    "seed": "ts-node prisma/seed.ts"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,7 @@
     "@solana/spl-token": "^0.4.13",
     "@solana/web3.js": "^1.98.0",
     "axios": "^1.12.1",
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "big.js": "^6.2.2",
     "bn.js": "^5.2.1",

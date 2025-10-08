@@ -18,7 +18,7 @@ import { useCurrentUser } from "@/hooks/user/useUser";
 import { getTimeAgo } from "@/lib/helpers";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Send } from "lucide-react";
 import Link from "next/link";
 
 export default function FeedPage() {
@@ -230,8 +230,8 @@ export default function FeedPage() {
                                             setCommentText((prev) => ({ ...prev, [p.id]: e.target.value }))
                                         }
                                     />
-                                    <Button onClick={() => handleComment(p.id, commentText[p.id] || "")}>
-                                        Send
+                                    <Button variant="secondary" onClick={() => handleComment(p.id, commentText[p.id] || "")}>
+                                        <Send />
                                     </Button>
                                 </div>
 
