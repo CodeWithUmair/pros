@@ -17,6 +17,8 @@ import { toast } from "react-hot-toast";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { getTimeAgo } from "@/lib/helpers";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal } from "lucide-react";
 
 export default function FeedPage() {
     const [posts, setPosts] = useState<any[]>([]);
@@ -134,17 +136,54 @@ export default function FeedPage() {
             {posts.map((p) => (
                 <Card key={p.id}>
                     <CardHeader className="flex flex-row items-center gap-3">
-                        <Avatar className="w-10 h-10">
-                            {p.author.avatar ? (
-                                <AvatarImage src={p.author.avatar} alt={p.author.name} />
-                            ) : (
-                                <AvatarFallback>{p.author.name[0]}</AvatarFallback>
+                        <div className="w-full flex items-start justify-between gap-4">
+
+                            <div className="flex gap-3">
+                                <Avatar className="w-10 h-10">
+                                    {p.author.avatar ? (
+                                        <AvatarImage src={p.author.avatar} alt={p.author.name} />
+                                    ) : (
+                                        <AvatarFallback>{p.author.name[0]}</AvatarFallback>
+                                    )}
+                                </Avatar>
+                                <div>
+                                    <p className="font-semibold">{p.author.name}</p>
+                                    <p className="text-xs text-muted-foreground">{getTimeAgo(p.createdAt)}</p>
+                                </div>
+                            </div>
+
+                            {p.author.id === user?.id && (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+                                            <MoreHorizontal className="w-4 h-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem
+                                            asChild
+                                            variant="ghostDestructive"
+                                        >
+                                            <Button
+                                                variant="ghostDestructive"
+                                                className="w-full"
+                                                loading={deletingPostId === p.id}
+                                                onClick={() => {
+                                                    setDeletingPostId(p.id);
+                                                    deletePost(p.id, {
+                                                        onSuccess: () => setDeletingPostId(null),
+                                                        onError: () => setDeletingPostId(null),
+                                                    });
+                                                }}
+                                            >
+                                                Delete this post
+                                            </Button>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             )}
-                        </Avatar>
-                        <div>
-                            <p className="font-semibold">{p.author.name}</p>
-                            <p className="text-xs text-muted-foreground">{getTimeAgo(p.createdAt)}</p>
                         </div>
+
                     </CardHeader>
 
                     <CardContent>
@@ -173,23 +212,6 @@ export default function FeedPage() {
                             >
                                 💬 {p.comments?.length || 0}
                             </Button>
-
-                            {p.author.id === user?.id && (
-                                <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    loading={deletingPostId === p.id}
-                                    onClick={() => {
-                                        setDeletingPostId(p.id);
-                                        deletePost(p.id, {
-                                            onSuccess: () => setDeletingPostId(null),
-                                            onError: () => setDeletingPostId(null),
-                                        });
-                                    }}
-                                >
-                                    🗑️
-                                </Button>
-                            )}
                         </div>
 
                         {/* Comments */}

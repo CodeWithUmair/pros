@@ -6,12 +6,12 @@ import { cn } from "@/lib/utils"
 import { LoaderCircle } from "lucide-react"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-base font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-base font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       variant: {
         default:
-          "bg-primaryOnly text-white shadow-xs hover:bg-primaryOnly/90",
+          "bg-primaryOnly text-white shadow-xs hover:bg-primaryOnly/90 rounded-full",
         destructive:
           "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
@@ -28,10 +28,8 @@ const buttonVariants = cva(
           "bg-grey5 text-muted-foreground hover:bg-grey5/80",
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        ghostDropdown:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         ghostDestructive:
-          "hover:bg-destructive text-destructive hover:text-white dark:hover:bg-destructive/50",
+          "hover:bg-destructive text-destructive hover:text-white dark:text-white dark:hover:bg-destructive/50",
         icon:
           "hover:bg-grey1/50 hover:text-accent-foreground dark:hover:bg-backgtound/50",
         link: "text-primaryOnly dark:text-primaryOnly underline-offset-4 hover:underline",
