@@ -16,7 +16,7 @@ export const useLogin = () => {
         onSuccess: (data) => {
             NotifySuccess("Logged in successfully 🎉");
             queryClient.invalidateQueries({ queryKey: ["me"] });
-            router.push("/"); // redirect after login
+            router.push("/d/feed"); // redirect after login
         },
         onError: (error: any) => {
             NotifyError(error.message || "Something went wrong");

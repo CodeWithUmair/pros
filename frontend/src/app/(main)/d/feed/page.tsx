@@ -102,7 +102,7 @@ export default function FeedPage() {
     if (isLoading) return <PageLoader />;
 
     return (
-        <div className="max-w-2xl mx-auto space-y-6 py-8">
+        <div className="max-w-2xl mx-auto space-y-4 py-8">
             {/* Post composer */}
             <Card>
                 <CardHeader>
@@ -155,9 +155,10 @@ export default function FeedPage() {
                         )}
 
                         {/* Actions */}
-                        <div className="flex items-center justify-end gap-3 mt-4">
+                        <div className="flex items-center justify-end gap-2 mt-4">
                             <Button
                                 variant="outline"
+                                size="sm"
                                 onClick={() => handleLike(p.id, p.likes)}
                             >
                                 ❤️ {p.likes?.length || 0}
@@ -165,6 +166,7 @@ export default function FeedPage() {
 
                             <Button
                                 variant="outline"
+                                size="sm"
                                 onClick={() =>
                                     setOpenComments((prev) => ({ ...prev, [p.id]: !prev[p.id] }))
                                 }
@@ -175,6 +177,7 @@ export default function FeedPage() {
                             {p.author.id === user?.id && (
                                 <Button
                                     variant="destructive"
+                                    size="sm"
                                     loading={deletingPostId === p.id}
                                     onClick={() => {
                                         setDeletingPostId(p.id);
