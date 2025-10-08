@@ -19,6 +19,7 @@ import { getTimeAgo } from "@/lib/helpers";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
+import Link from "next/link";
 
 export default function FeedPage() {
     const [posts, setPosts] = useState<any[]>([]);
@@ -138,7 +139,10 @@ export default function FeedPage() {
                     <CardHeader className="flex flex-row items-center gap-3">
                         <div className="w-full flex items-start justify-between gap-4">
 
-                            <div className="flex gap-3">
+                            <Link
+                                href={p.author.id === user?.id ? "/d/profile" : `/d/user/${p.author.id}`}
+                                className="flex gap-3 items-center"
+                            >
                                 <Avatar className="w-10 h-10">
                                     {p.author.avatar ? (
                                         <AvatarImage src={p.author.avatar} alt={p.author.name} />
@@ -150,7 +154,7 @@ export default function FeedPage() {
                                     <p className="font-semibold">{p.author.name}</p>
                                     <p className="text-xs text-muted-foreground">{getTimeAgo(p.createdAt)}</p>
                                 </div>
-                            </div>
+                            </Link>
 
                             {p.author.id === user?.id && (
                                 <DropdownMenu>

@@ -5,6 +5,7 @@ import {
     addSkill,
     removeSkill,
     updateAvatar,
+    getUserById,
 } from "../controllers/user.controller";
 import { protect } from "../middlewares/auth-middleware";
 import { upload } from "../middlewares/multer";
@@ -12,6 +13,8 @@ import { upload } from "../middlewares/multer";
 const router = express.Router();
 
 router.get("/me", protect, getMe);
+router.get("/:id", protect, getUserById);
+
 router.patch("/me", protect, updateMe);
 router.post("/me/skills", protect, addSkill);
 router.delete("/me/skills/:skillId", protect, removeSkill);
