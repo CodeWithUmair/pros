@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useContext } from "react";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useCurrentUser } from "@/hooks/user/useUser";
 import { User } from "@/types/user.types";
 
 type UserContextType = {

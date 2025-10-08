@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetTrigger, SheetContent, SheetHeader } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useCurrentUser } from "@/hooks/user/useUser";
 import { ModeToggle } from "./theme-toggle";
 import { useLogout } from "@/hooks/useAuth";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 export function AppHeader() {
     const { data: user } = useCurrentUser();
@@ -27,12 +28,12 @@ export function AppHeader() {
     return (
         <header className="fixed z-50 top-0 left-0 right-0 w-full flex items-center justify-between px-4 py-2 border-b border-muted-foreground bg-background">
             {/* Logo */}
-            <div className="flex items-center gap-2">
+            <Link href={'/d/feed'} className="flex items-center gap-2">
                 <Image src="/images/logo.svg" alt="Logo" width={40} height={40} />
-            </div>
+            </Link>
 
             {/* User info */}
-            <div className="hidden sm:flex items-center gap-2">
+            <Link href={'/d/profile'} className="hidden sm:flex items-center gap-2">
                 <Avatar className="w-8 h-8">
                     {user.avatar ? (
                         <AvatarImage src={user.avatar} alt={user.name} />
@@ -41,7 +42,7 @@ export function AppHeader() {
                     )}
                 </Avatar>
                 <span className="font-medium truncate max-w-[120px]">{truncatedName}</span>
-            </div>
+            </Link>
 
             {/* Right actions */}
             <div className="flex items-center gap-2">
