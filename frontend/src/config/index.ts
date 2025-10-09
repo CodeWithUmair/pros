@@ -1,5 +1,5 @@
-export const BACKEND_DOMAIN = process.env.NEXT_PUBLIC_BACKEND_DOMAIN
-export const BACKEND_URL = `${BACKEND_DOMAIN}/api/v1`
+export const API_BASE = process.env.NEXT_PUBLIC_BACKEND_DOMAIN
+export const BACKEND_URL = `${API_BASE}/api/v1`
 
 export const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL
 

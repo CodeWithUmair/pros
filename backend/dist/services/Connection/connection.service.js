@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPendingRequests = exports.getMyConnections = exports.respondToRequest = exports.sendRequest = void 0;
 const db_1 = __importDefault(require("../../config/db"));
+const socket_1 = require("../../socket");
+const fcm_service_1 = require("../fcm-service");
 const sendRequest = (_a) => __awaiter(void 0, [_a], void 0, function* ({ requesterId, receiverId }) {
     if (requesterId === receiverId)
         throw new Error("You cannot connect with yourself.");
@@ -33,15 +35,45 @@ const sendRequest = (_a) => __awaiter(void 0, [_a], void 0, function* ({ request
 });
 exports.sendRequest = sendRequest;
 const respondToRequest = (_a) => __awaiter(void 0, [_a], void 0, function* ({ connectionId, userId, accept }) {
-    const connection = yield db_1.default.connection.findUnique({ where: { id: connectionId } });
+    const connection = yield db_1.default.connection.findUnique({
+        where: { id: connectionId },
+        include: { requester: true, receiver: true },
+    });
     if (!connection)
         throw new Error("Request not found.");
     if (connection.receiverId !== userId)
         throw new Error("Not authorized.");
-    return db_1.default.connection.update({
+    const updatedConnection = yield db_1.default.connection.update({
         where: { id: connectionId },
         data: { status: accept ? "ACCEPTED" : "REJECTED" },
+        include: { requester: true, receiver: true },
     });
+    if (accept) {
+        const notification = yield db_1.default.notification.create({
+            data: {
+                userId: connection.requesterId,
+                type: "CONNECTION",
+                content: `${connection.receiver.name} accepted your connection request!`,
+            },
+        });
+        try {
+            console.log("🔔 Emitting notification to:", connection.requesterId);
+            const io = (0, socket_1.getIo)();
+            io.to(connection.requesterId).emit("receive_notification", notification);
+        }
+        catch (err) {
+            console.error("Socket emit failed:", err);
+        }
+        try {
+            if (connection.requester.fcmToken) {
+                (0, fcm_service_1.sendPushNotification)(connection.requester.fcmToken, "Connection Accepted", `${connection.receiver.name} accepted your request`);
+            }
+        }
+        catch (err) {
+            console.error("FCM push failed:", err);
+        }
+    }
+    return updatedConnection;
 });
 exports.respondToRequest = respondToRequest;
 const getMyConnections = (_a) => __awaiter(void 0, [_a], void 0, function* ({ userId }) {

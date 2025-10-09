@@ -41,10 +41,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateAvatar = exports.removeSkill = exports.addSkill = exports.updateMe = exports.getMe = void 0;
+exports.updateFcmToken = exports.updateAvatar = exports.removeSkill = exports.addSkill = exports.updateMe = exports.getUserById = exports.getMe = void 0;
 const userService = __importStar(require("../services/User/user.services"));
 const upload_1 = require("../utils/upload");
+const db_1 = __importDefault(require("../config/db"));
 // GET /users/me
 const getMe = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -56,6 +60,21 @@ const getMe = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.getMe = getMe;
+// GET /user/:id
+const getUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield userService.getUserById(req.params.id, req.user.id);
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
+        res.json(user);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.getUserById = getUserById;
 // PATCH /users/me
 const updateMe = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -111,3 +130,16 @@ const updateAvatar = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.updateAvatar = updateAvatar;
+const updateFcmToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.user.id;
+    const { fcmToken } = req.body;
+    if (!fcmToken) {
+        return res.status(400).json({ message: "FCM token is required" });
+    }
+    const updatedUser = yield db_1.default.user.update({
+        where: { id: userId },
+        data: { fcmToken },
+    });
+    res.json({ success: true, fcmToken: updatedUser.fcmToken });
+});
+exports.updateFcmToken = updateFcmToken;

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import { LogOut, Settings } from "lucide-react";
+import { Bell, LogOut, Settings } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuTrigger,
@@ -46,6 +46,10 @@ export function AppHeader() {
 
             {/* Right actions */}
             <div className="flex items-center gap-2">
+
+                <Link href={'/d/notifications'}>
+                    <Bell />
+                </Link>
                 {/* Desktop dropdown */}
                 <div className="hidden sm:block">
                     <DropdownMenu>

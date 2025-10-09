@@ -14,8 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateAvatar = exports.removeSkill = exports.addSkill = exports.updateUser = exports.getUserById = void 0;
 const db_1 = __importDefault(require("../../config/db"));
-const getUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    return db_1.default.user.findUnique({
+const getUserById = (id, currentUserId) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield db_1.default.user.findUnique({
         where: { id },
         select: {
             id: true,
@@ -26,11 +26,39 @@ const getUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
             madhab: true,
             halalCareerPreference: true,
             avatar: true,
-            skills: {
-                include: { skill: true },
-            },
+            skills: { include: { skill: true } },
         },
     });
+    if (!user)
+        return null;
+    let connectionStatus = "NONE";
+    let pendingConnectionId = null;
+    if (currentUserId && currentUserId !== id) {
+        const connection = yield db_1.default.connection.findFirst({
+            where: {
+                OR: [
+                    { requesterId: currentUserId, receiverId: id },
+                    { requesterId: id, receiverId: currentUserId },
+                ],
+            },
+        });
+        if (connection) {
+            if (connection.status === "ACCEPTED")
+                connectionStatus = "ACCEPTED";
+            else if (connection.status === "PENDING") {
+                if (connection.requesterId === currentUserId) {
+                    connectionStatus = "PENDING_SENT";
+                }
+                else {
+                    connectionStatus = "PENDING_RECEIVED";
+                    pendingConnectionId = connection.id;
+                }
+            }
+            else if (connection.status === "REJECTED")
+                connectionStatus = "REJECTED";
+        }
+    }
+    return Object.assign(Object.assign({}, user), { connectionStatus, pendingConnectionId });
 });
 exports.getUserById = getUserById;
 const updateUser = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
