@@ -3,6 +3,7 @@ import * as userService from "../services/User/user.services";
 import { AuthenticatedRequest } from "../types/express";
 import { UpdateUserDTO, AddSkillDTO, RemoveSkillDTO, UpdateAvatarDTO } from "../services/User/DTO";
 import { uploadAvatar } from "../utils/upload";
+import prisma from "../config/db";
 
 // GET /users/me
 export const getMe = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -79,4 +80,21 @@ export const updateAvatar = async (req: any, res: any, next: any) => {
   } catch (err) {
     next(err);
   }
+};
+
+
+export const updateFcmToken = async (req, res) => {
+  const userId = req.user.id;
+  const { fcmToken } = req.body;
+
+  if (!fcmToken) {
+    return res.status(400).json({ message: "FCM token is required" });
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: { fcmToken },
+  });
+
+  res.json({ success: true, fcmToken: updatedUser.fcmToken });
 };

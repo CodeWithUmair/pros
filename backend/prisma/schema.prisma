@@ -26,6 +26,7 @@ model User {
   updatedAt  DateTime @updatedAt
 
   refreshTokenHash String? @db.Text
+  fcmToken         String? @unique
 
   posts    Post[]
   comments Comment[]
