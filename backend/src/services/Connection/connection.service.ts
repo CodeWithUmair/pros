@@ -26,7 +26,6 @@ export const sendRequest = async ({ requesterId, receiverId }: SendRequestDTO) =
     where: { id: requesterId },
     select: { id: true, name: true },
   });
-  console.log("🚀 ~ sendRequest ~ requester:", requester)
 
   const connection = await prisma.connection.create({
     data: { requesterId, receiverId },
@@ -40,6 +39,7 @@ export const sendRequest = async ({ requesterId, receiverId }: SendRequestDTO) =
       userId: receiverId,
       type: "CONNECTION",
       content,
+      meta: requester ? { requesterId: requester.id } : null
     },
   });
 

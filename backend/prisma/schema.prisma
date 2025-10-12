@@ -127,6 +127,7 @@ model Notification {
   type      String // e.g. "MESSAGE", "LIKE", "COMMENT", "CONNECTION"
   content   String // short description
   isRead    Boolean  @default(false)
+  meta      Json? 
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])

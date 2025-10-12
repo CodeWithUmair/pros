@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { useMarkNotificationRead, useNotifications } from "@/hooks/user/useNotifications";
 import { useSocket } from "@/hooks/useSocket";
 
@@ -19,7 +20,6 @@ export default function NotificationsPage() {
         if (!socket || !userId) return;
 
         const handleReceiveNotification = (notification: any) => {
-            console.log("🔔 Received notification:", notification);
             setRealTimeNotifications((prev) => {
                 if (prev.find((n) => n.id === notification.id)) return prev;
                 return [notification, ...prev];
@@ -38,7 +38,6 @@ export default function NotificationsPage() {
         return () => {
             socket.off("receive_notification", handleReceiveNotification);
             socket.off("notification_read", handleNotificationRead);
-            // DO NOT disconnect global socket
         };
     }, [socket, userId]);
 
@@ -71,7 +70,19 @@ export default function NotificationsPage() {
                             }`}
                     >
                         <div className="flex justify-between items-center">
-                            <p>{notif.content}</p>
+                            {/* Wrap notification content in Link if userId exists */}
+                            {notif.userId ? (
+                                <Link
+                                    href={notif.meta?.requesterId ? `/d/user/${notif.meta.requesterId}` : "#"}
+                                    className="flex-1 hover:underline"
+                                    onClick={() => handleMarkRead(notif.id)}
+                                >
+                                    {notif.content}
+                                </Link>
+                            ) : (
+                                <p className="flex-1">{notif.content}</p>
+                            )}
+
                             {!notif.isRead && (
                                 <Button
                                     size="sm"

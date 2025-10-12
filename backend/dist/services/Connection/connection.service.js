@@ -34,7 +34,6 @@ const sendRequest = (_a) => __awaiter(void 0, [_a], void 0, function* ({ request
         where: { id: requesterId },
         select: { id: true, name: true },
     });
-    console.log("🚀 ~ sendRequest ~ requester:", requester);
     const connection = yield db_1.default.connection.create({
         data: { requesterId, receiverId },
     });
@@ -45,6 +44,7 @@ const sendRequest = (_a) => __awaiter(void 0, [_a], void 0, function* ({ request
             userId: receiverId,
             type: "CONNECTION",
             content,
+            meta: requester ? { requesterId: requester.id } : null
         },
     });
     // ✅ Emit via socket
