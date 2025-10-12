@@ -1,15 +1,18 @@
+// src/socket/index.ts
+
 import { Server } from "socket.io";
 import { socketHandlers } from "./handlers";
 
 let io: Server;
 
 export const initSocket = (httpServer: any) => {
-    io = new Server(httpServer, {
+    const io = new Server(httpServer, {
         cors: {
             origin: ["http://localhost:3000", "http://localhost:3001"],
-            methods: ["GET", "POST"],
+            methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
             credentials: true,
         },
+        transports: ["websocket", "polling"],
     });
 
     io.on("connection", (socket) => socketHandlers(io, socket));

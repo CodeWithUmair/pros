@@ -29,9 +29,43 @@ const sendRequest = (_a) => __awaiter(void 0, [_a], void 0, function* ({ request
     });
     if (existing)
         throw new Error("Connection already exists or pending.");
-    return db_1.default.connection.create({
+    // ✅ Get requester info (to show name)
+    const requester = yield db_1.default.user.findUnique({
+        where: { id: requesterId },
+        select: { id: true, name: true },
+    });
+    const connection = yield db_1.default.connection.create({
         data: { requesterId, receiverId },
     });
+    // ✅ Create a more readable notification
+    const content = `You have a new connection request from ${(requester === null || requester === void 0 ? void 0 : requester.name) || "a user"}`;
+    const notification = yield db_1.default.notification.create({
+        data: {
+            userId: receiverId,
+            type: "CONNECTION",
+            content,
+        },
+    });
+    // ✅ Emit via socket
+    try {
+        const io = (0, socket_1.getIo)();
+        console.log("🔔 Emitting notification to:", receiverId);
+        io.to(String(receiverId)).emit("receive_notification", notification);
+    }
+    catch (err) {
+        console.error("Socket emit failed:", err);
+    }
+    // ✅ Optional: send FCM push
+    try {
+        const receiver = yield db_1.default.user.findUnique({ where: { id: receiverId } });
+        if (receiver === null || receiver === void 0 ? void 0 : receiver.fcmToken) {
+            (0, fcm_service_1.sendPushNotification)(receiver.fcmToken, "New Connection Request", content);
+        }
+    }
+    catch (err) {
+        console.error("FCM push failed:", err);
+    }
+    return connection;
 });
 exports.sendRequest = sendRequest;
 const respondToRequest = (_a) => __awaiter(void 0, [_a], void 0, function* ({ connectionId, userId, accept }) {

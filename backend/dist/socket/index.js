@@ -1,15 +1,18 @@
 "use strict";
+// src/socket/index.ts
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getIo = exports.initSocket = void 0;
 const socket_io_1 = require("socket.io");
 const handlers_1 = require("./handlers");
 let io;
 const initSocket = (httpServer) => {
-    io = new socket_io_1.Server(httpServer, {
+    const io = new socket_io_1.Server(httpServer, {
         cors: {
             origin: ["http://localhost:3000", "http://localhost:3001"],
+            methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
             credentials: true,
         },
+        transports: ["websocket", "polling"],
     });
     io.on("connection", (socket) => (0, handlers_1.socketHandlers)(io, socket));
     return io;

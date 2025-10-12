@@ -16,6 +16,7 @@ import { ModeToggle } from "./theme-toggle";
 import { useLogout } from "@/hooks/useAuth";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { NotificationBell } from "./notifications/notificationBell";
 
 export function AppHeader() {
     const { data: user } = useCurrentUser();
@@ -47,9 +48,8 @@ export function AppHeader() {
             {/* Right actions */}
             <div className="flex items-center gap-2">
 
-                <Link href={'/d/notifications'}>
-                    <Bell />
-                </Link>
+                <NotificationBell />
+
                 {/* Desktop dropdown */}
                 <div className="hidden sm:block">
                     <DropdownMenu>

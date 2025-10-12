@@ -14,11 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const db_1 = __importDefault(require("../config/db"));
+const auth_middleware_1 = require("../middlewares/auth-middleware");
 const router = (0, express_1.Router)();
-// Get all notifications for user
-router.get("/:userId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// ✅ Fetch current user's notifications
+router.get("/me", auth_middleware_1.protect, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { userId } = req.params;
+        const userId = req.user.id;
         const notifications = yield db_1.default.notification.findMany({
             where: { userId },
             orderBy: { createdAt: "desc" },
@@ -26,21 +27,21 @@ router.get("/:userId", (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.json(notifications);
     }
     catch (err) {
+        console.error(err);
         res.status(500).json({ error: "Failed to fetch notifications" });
     }
 }));
-// Mark all as read
-router.patch("/:userId/read-all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.patch("/:notificationId/read", auth_middleware_1.protect, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { userId } = req.params;
-        yield db_1.default.notification.updateMany({
-            where: { userId },
+        const { notificationId } = req.params;
+        const updated = yield db_1.default.notification.update({
+            where: { id: notificationId },
             data: { isRead: true },
         });
-        res.json({ message: "All notifications marked as read" });
+        res.json(updated);
     }
     catch (err) {
-        res.status(500).json({ error: "Failed to update notifications" });
+        res.status(500).json({ error: "Failed to update notification" });
     }
 }));
 exports.default = router;

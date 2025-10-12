@@ -1,33 +1,34 @@
 import { Router } from "express";
 import prisma from "../config/db";
+import { protect } from "../middlewares/auth-middleware";
 
 const router = Router();
 
-// Get all notifications for user
-router.get("/:userId", async (req, res) => {
+// ✅ Fetch current user's notifications
+router.get("/me", protect, async (req: any, res) => {
     try {
-        const { userId } = req.params;
+        const userId = req.user.id;
         const notifications = await prisma.notification.findMany({
             where: { userId },
             orderBy: { createdAt: "desc" },
         });
         res.json(notifications);
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: "Failed to fetch notifications" });
     }
 });
 
-// Mark all as read
-router.patch("/:userId/read-all", async (req, res) => {
+router.patch("/:notificationId/read", protect, async (req: any, res) => {
     try {
-        const { userId } = req.params;
-        await prisma.notification.updateMany({
-            where: { userId },
+        const { notificationId } = req.params;
+        const updated = await prisma.notification.update({
+            where: { id: notificationId },
             data: { isRead: true },
         });
-        res.json({ message: "All notifications marked as read" });
+        res.json(updated);
     } catch (err) {
-        res.status(500).json({ error: "Failed to update notifications" });
+        res.status(500).json({ error: "Failed to update notification" });
     }
 });
 

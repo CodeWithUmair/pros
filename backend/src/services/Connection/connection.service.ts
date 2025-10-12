@@ -21,20 +21,29 @@ export const sendRequest = async ({ requesterId, receiverId }: SendRequestDTO) =
   });
   if (existing) throw new Error("Connection already exists or pending.");
 
+  // ✅ Get requester info (to show name)
+  const requester = await prisma.user.findUnique({
+    where: { id: requesterId },
+    select: { id: true, name: true },
+  });
+  console.log("🚀 ~ sendRequest ~ requester:", requester)
+
   const connection = await prisma.connection.create({
     data: { requesterId, receiverId },
   });
 
-  // ✅ Create notification for the receiver
+  // ✅ Create a more readable notification
+  const content = `You have a new connection request from ${requester?.name || "a user"}`;
+
   const notification = await prisma.notification.create({
     data: {
       userId: receiverId,
       type: "CONNECTION",
-      content: `You have a new connection request from user ${requesterId}`,
+      content,
     },
   });
 
-  // ✅ Emit via socket to receiver room
+  // ✅ Emit via socket
   try {
     const io = getIo();
     console.log("🔔 Emitting notification to:", receiverId);
@@ -47,11 +56,7 @@ export const sendRequest = async ({ requesterId, receiverId }: SendRequestDTO) =
   try {
     const receiver = await prisma.user.findUnique({ where: { id: receiverId } });
     if (receiver?.fcmToken) {
-      sendPushNotification(
-        receiver.fcmToken,
-        "New Connection Request",
-        `You have a new connection request from user ${requesterId}`
-      );
+      sendPushNotification(receiver.fcmToken, "New Connection Request", content);
     }
   } catch (err) {
     console.error("FCM push failed:", err);

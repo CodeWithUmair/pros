@@ -7,6 +7,7 @@ import { useSocket } from "@/hooks/useSocket";
 
 export default function NotificationsPage() {
     const { data: notifications = [] } = useNotifications();
+    console.log("🚀 ~ NotificationsPage ~ notifications:", notifications)
     const { mutate: markRead } = useMarkNotificationRead();
 
     const [realTimeNotifications, setRealTimeNotifications] = useState<any[]>([]);
