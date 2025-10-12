@@ -2,6 +2,7 @@ node_modules
 .env
 
 /src/config/pros-2d0ad-firebase-servicekey.json
+/dist/config/pros-2d0ad-firebase-servicekey.json
 
 # TypeChain files
 /typechain
